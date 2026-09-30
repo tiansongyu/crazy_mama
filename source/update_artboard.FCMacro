@@ -1,0 +1,50 @@
+import FreeCAD as App, FreeCADGui as Gui, Part, MeshPart
+import os,json,traceback
+ROOT='/home/ubuntu/github/structure/surfer_figurine_artboard_v3'
+prefix=open(ROOT+'/source/build_refined.FCMacro').read().split('\ntry:\n')[0]
+exec(compile(prefix,ROOT+'/source/build_refined.FCMacro','exec'),globals())
+open(LOG,'w').close()
+try:
+    if 'Photo_Figure_Artboard_V3' in App.listDocuments():App.closeDocument('Photo_Figure_Artboard_V3')
+    doc=App.openDocument(ROOT+'/Photo_Figure_Artboard_V3.FCStd');doc.Label='Photo_Figure_Artboard_V3'
+    assembly=doc.getObject('Assembly');parts=list(assembly.Group)
+    co=doc.getObject('FitCoupon');tp=doc.getObject('FitTestPin');guides=doc.getObject('Construction')
+    base_colors={p['id']:p['color'] for p in json.load(open(ROOT+'/source/parts_manifest.json'))}
+    if 'ART_DECK_MASTER' in globals():board=ART_DECK_MASTER.copy()
+    else:
+        board,ART_PATHS=build_artboard();ART_DECK_MASTER=board.copy()
+    def posed_tool(s):
+        pm=App.Matrix();pm.A13=-POSE_SHEAR;pm.A14=POSE_SHEAR*7
+        return s.transformGeometry(pm)
+    for x in (-20,1):board=board.cut(posed_tool(d_pin((x,0,1.7),3,5.5,clearance=FIT)))
+    aft=board.common(posed_tool(box(-120,-40,-1,120,80,40)));fore=board.common(posed_tool(box(0,-40,-1,120,80,40)))
+    for y in (-12,12):
+        aft=aft.cut(posed_tool(Part.makeCylinder(2+FIT,8.3,V(0,y,3.5),V(-1,0,0))))
+        fore=fore.cut(posed_tool(Part.makeCylinder(2+FIT,8.3,V(0,y,3.5),V(1,0,0))))
+    for name,raw in [('P01_Board_Left',aft),('P02_Board_Right',fore)]:
+        shape=raw.copy();shape.scale(SCALE)
+        if not shape.isValid() or len(shape.Solids)!=1:raise RuntimeError(name+' curved board invalid')
+        obj=doc.getObject(name);obj.Shape=shape
+        obj.AssemblyInstructions='Curved nose/tail and rail concave; engraved wave and petal motifs. Original D foot keys and two dowel joint preserved. Paint engraving after printing.'
+        def raw_point(p):
+            return p/SCALE
+        obj.ViewObject.DiffuseColor=[(.89,.66,.27) if any(art_color(raw_point(p))!=RED for p in [f.CenterOfMass]+[v.Point for v in f.Vertexes]) else RED for f in shape.Faces]
+        for name,value in [('TipRise',8*SCALE),('ConcaveRise',1.8*SCALE),('EngravingDepth',.55)]:
+            if name not in obj.PropertiesList:obj.addProperty('App::PropertyLength',name,'Deck')
+            setattr(obj,name,value)
+    for obj in parts:obj.VersionNotes='V3: 150 mm figure, smiling face, chest bow; curved artistic skateboard with printable engraving'
+    params=doc.getObject('Dimensions')
+    for i,(a,b) in enumerate([('Board tip rise','6.67'),('Rail concave rise','1.50'),('Engraving depth','0.55'),('Engraving nominal width','1.30')],15):params.set('A'+str(i),a);params.set('B'+str(i),b)
+    doc.recompute();report=[]
+    for obj in parts+[co,tp]:
+        if not obj.Shape.isValid() or len(obj.Shape.Solids)!=1:raise RuntimeError('Final solid check '+obj.Name)
+        mesh=MeshPart.meshFromShape(Shape=obj.Shape,LinearDeflection=.04,AngularDeflection=.12,Relative=False)
+        mesh.write(ROOT+'/stl/'+obj.Name+'.stl');obj.Shape.exportBrep(ROOT+'/source/'+obj.Name+'.brep')
+        b=obj.Shape.BoundBox
+        report.append(dict(id=obj.Name,label=obj.Label,volume_mm3=round(obj.Shape.Volume,3),valid=obj.Shape.isValid(),solids=len(obj.Shape.Solids),triangles=mesh.CountFacets,bounds=[b.XMin,b.YMin,b.ZMin,b.XMax,b.YMax,b.ZMax],color=base_colors[obj.Name],instructions=getattr(obj,'AssemblyInstructions','Fit test')))
+    with open(ROOT+'/source/parts_manifest.json','w') as f:json.dump(report,f,ensure_ascii=False,indent=2)
+    Part.export(parts,ROOT+'/Photo_Figure_Artboard_Assembly.step')
+    exec(compile(open(ROOT+'/source/audit_assembly.py').read(),ROOT+'/source/audit_assembly.py','exec'),globals())
+    exec(compile(open(ROOT+'/source/finalize_in_freecad.py').read(),ROOT+'/source/finalize_in_freecad.py','exec'),globals())
+    log('ARTBOARD_COMPLETE')
+except Exception:log(traceback.format_exc())

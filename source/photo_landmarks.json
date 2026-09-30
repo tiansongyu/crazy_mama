@@ -1,0 +1,110 @@
+{
+  "reference": "/home/ubuntu/Pictures/zhen.jpg",
+  "image_size": [
+    1078,
+    1074
+  ],
+  "landmarks_pixels": {
+    "head_top": [
+      674,
+      101
+    ],
+    "chin": [
+      658,
+      222
+    ],
+    "neck": [
+      652,
+      236
+    ],
+    "left_shoulder": [
+      550,
+      260
+    ],
+    "right_shoulder": [
+      742,
+      266
+    ],
+    "left_elbow": [
+      475,
+      373
+    ],
+    "left_cuff": [
+      443,
+      431
+    ],
+    "left_hand": [
+      419,
+      449
+    ],
+    "right_cuff": [
+      776,
+      522
+    ],
+    "right_hand": [
+      773,
+      536
+    ],
+    "shirt_left_hem": [
+      509,
+      516
+    ],
+    "shirt_right_hem": [
+      709,
+      540
+    ],
+    "left_hip": [
+      552,
+      536
+    ],
+    "right_hip": [
+      647,
+      545
+    ],
+    "left_knee": [
+      506,
+      667
+    ],
+    "right_knee": [
+      592,
+      683
+    ],
+    "left_ankle": [
+      460,
+      798
+    ],
+    "right_ankle": [
+      558,
+      830
+    ],
+    "left_foot": [
+      441,
+      816
+    ],
+    "right_foot": [
+      548,
+      847
+    ],
+    "pole_top": [
+      413,
+      464
+    ],
+    "pole_base": [
+      266,
+      795
+    ],
+    "blade_center": [
+      323,
+      820
+    ],
+    "board_left": [
+      90,
+      760
+    ],
+    "board_right": [
+      1005,
+      878
+    ]
+  },
+  "note": "Manually estimated from one blurry photo; not survey-grade measurements. Final assembled height approximately 150 mm. Standing axis is calibrated to 8 degrees from the board normal (82 degrees from the board plane), after removing the image roll of the board."
+}

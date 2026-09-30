@@ -1,0 +1,376 @@
+[
+  {
+    "id": "P01_Board_Left",
+    "label": "01 • Board left / 板体左半",
+    "volume_mm3": 24360.969,
+    "valid": true,
+    "solids": 1,
+    "triangles": 39416,
+    "bounds": [
+      -91.66666140904132,
+      -23.333333333333357,
+      0.0,
+      0.6754316287930114,
+      23.333333333333357,
+      12.499997195763111
+    ],
+    "color": [
+      0.73,
+      0.17,
+      0.29
+    ],
+    "instructions": "Curved nose/tail and rail concave; engraved wave and petal motifs. Original D foot keys and two dowel joint preserved. Paint engraving after printing."
+  },
+  {
+    "id": "P02_Board_Right",
+    "label": "02 • Board right / 板体右半",
+    "volume_mm3": 24231.264,
+    "valid": true,
+    "solids": 1,
+    "triangles": 38908,
+    "bounds": [
+      -0.17368241883249258,
+      -23.333333333333357,
+      0.0,
+      91.66666666666667,
+      23.333333333333357,
+      12.50000000000003
+    ],
+    "color": [
+      0.73,
+      0.17,
+      0.29
+    ],
+    "instructions": "Curved nose/tail and rail concave; engraved wave and petal motifs. Original D foot keys and two dowel joint preserved. Paint engraving after printing."
+  },
+  {
+    "id": "P03_Dowel_1",
+    "label": "03a • Board dowel / 板体定位销",
+    "volume_mm3": 112.211,
+    "valid": true,
+    "solids": 1,
+    "triangles": 1096,
+    "bounds": [
+      -6.237194833873096,
+      -11.666666553771167,
+      1.250000386185003,
+      6.912617928335018,
+      -8.333335569273341,
+      4.583333333333334
+    ],
+    "color": [
+      0.92,
+      0.9,
+      0.85
+    ],
+    "instructions": "Ø3.33 × 12.83mm, two pieces. Chamfered ends."
+  },
+  {
+    "id": "P03_Dowel_2",
+    "label": "03b • Board dowel / 板体定位销",
+    "volume_mm3": 112.211,
+    "valid": true,
+    "solids": 1,
+    "triangles": 1096,
+    "bounds": [
+      -6.237194833873096,
+      8.333333446228833,
+      1.250000386185003,
+      6.912617928335018,
+      11.66666443072666,
+      4.583333333333334
+    ],
+    "color": [
+      0.92,
+      0.9,
+      0.85
+    ],
+    "instructions": "Ø3.33 × 12.83mm, two pieces. Chamfered ends."
+  },
+  {
+    "id": "P04_Leg",
+    "label": "04 • Left leg / 裤腿、脚踝与鞋",
+    "volume_mm3": 8644.342,
+    "valid": true,
+    "solids": 1,
+    "triangles": 24796,
+    "bounds": [
+      -29.938935702806063,
+      -9.03921557584225,
+      1.9166666666666663,
+      4.013232548646303,
+      7.800510389691419,
+      73.33333333333336
+    ],
+    "color": [
+      0.115,
+      0.145,
+      0.205
+    ],
+    "instructions": "Foot D key Ø5mm; waist D key Ø5.83mm. Small exposed ankle and low shoe vamp."
+  },
+  {
+    "id": "P05_Leg",
+    "label": "05 • Right leg / 裤腿、脚踝与鞋",
+    "volume_mm3": 8452.147,
+    "valid": true,
+    "solids": 1,
+    "triangles": 24542,
+    "bounds": [
+      -11.174455587740898,
+      -10.725734326586272,
+      1.9166666666666663,
+      22.34656588197964,
+      7.596357946828086,
+      73.33333333333336
+    ],
+    "color": [
+      0.115,
+      0.145,
+      0.205
+    ],
+    "instructions": "Foot D key Ø5mm; waist D key Ø5.83mm. Small exposed ankle and low shoe vamp."
+  },
+  {
+    "id": "P06_Torso",
+    "label": "06 • Sweater / 宽松上衣与布料褶皱",
+    "volume_mm3": 37640.527,
+    "valid": true,
+    "solids": 1,
+    "triangles": 23582,
+    "bounds": [
+      -14.402978518240936,
+      -12.751250514974753,
+      68.33333333333331,
+      30.74748965900161,
+      10.73898265885164,
+      125.40833333333337
+    ],
+    "color": [
+      0.79,
+      0.3,
+      0.43
+    ],
+    "instructions": "Photo-based sweater proportions and cloth relief. Central D socket for separate chest bow."
+  },
+  {
+    "id": "P07_LeftArm",
+    "label": "07 • Left arm / 左袖、拇指与握杆手",
+    "volume_mm3": 3907.682,
+    "valid": true,
+    "solids": 1,
+    "triangles": 30220,
+    "bounds": [
+      -37.71177983104803,
+      -9.588186324008227,
+      78.75054137648695,
+      -5.595312102907041,
+      6.811810671365916,
+      119.32753500748677
+    ],
+    "color": [
+      0.79,
+      0.3,
+      0.43
+    ],
+    "instructions": "Key into left shoulder; slide upper pole through the hand, then connect the lower pole."
+  },
+  {
+    "id": "P08_RightArm",
+    "label": "08 • Right arm / 下垂衣袖与自然手指",
+    "volume_mm3": 4020.635,
+    "valid": true,
+    "solids": 1,
+    "triangles": 21894,
+    "bounds": [
+      24.867498736916982,
+      -6.668461171092972,
+      62.25000000000001,
+      43.494624001956325,
+      6.818848704126928,
+      119.32816388504031
+    ],
+    "color": [
+      0.79,
+      0.3,
+      0.43
+    ],
+    "instructions": "Key into right shoulder. Separate thumb and four rounded fingertip contours are integral."
+  },
+  {
+    "id": "P09_Head",
+    "label": "09 • Smiling sculpted head / 微笑与老年面部细节",
+    "volume_mm3": 3626.462,
+    "valid": true,
+    "solids": 1,
+    "triangles": 57216,
+    "bounds": [
+      0.6264468537554035,
+      -9.251037604715862,
+      120.41666666666669,
+      21.185147370629124,
+      7.6114413216764945,
+      149.83333333333343
+    ],
+    "color": [
+      0.76,
+      0.51,
+      0.4
+    ],
+    "instructions": "Raised smile corners, cheek folds, eye sockets, nose bridge and alae, forehead lines, open ear recesses. Turned 8° toward photo left."
+  },
+  {
+    "id": "P10_Collar",
+    "label": "10 • Crew collar / 宽白色圆领",
+    "volume_mm3": 181.184,
+    "valid": true,
+    "solids": 1,
+    "triangles": 1176,
+    "bounds": [
+      1.5258689147535465,
+      -6.415792145996299,
+      125.41666666666664,
+      18.903651609743257,
+      6.4160936203280485,
+      127.25000000000003
+    ],
+    "color": [
+      0.92,
+      0.9,
+      0.85
+    ],
+    "instructions": "Slides over neck before mounting head. 0.30mm radial neck clearance."
+  },
+  {
+    "id": "P11_Hair",
+    "label": "11 • Receding gray hair / 两侧与后脑灰发",
+    "volume_mm3": 286.075,
+    "valid": true,
+    "solids": 1,
+    "triangles": 6686,
+    "bounds": [
+      0.445511364346108,
+      -0.9972159269156942,
+      138.1666666666667,
+      20.755881084854103,
+      9.028950575628087,
+      149.16630890594104
+    ],
+    "color": [
+      0.4,
+      0.405,
+      0.4
+    ],
+    "instructions": "Horseshoe rear hair band, bald crown preserved. Approx 1.2mm wall and 0.20mm seating clearance. Glue."
+  },
+  {
+    "id": "P12_PaddleLower",
+    "label": "12 • Pole lower & oval foot / 细杆下段与贴板椭圆底片",
+    "volume_mm3": 809.414,
+    "valid": true,
+    "solids": 1,
+    "triangles": 21690,
+    "bounds": [
+      -56.86505786337422,
+      -10.415682062988738,
+      5.841666666666667,
+      -35.004113649376805,
+      -2.084271097044116,
+      59.68155457918273
+    ],
+    "color": [
+      0.4,
+      0.405,
+      0.4
+    ],
+    "instructions": "Oval end sits nearly flat on board, following photo. Shaft Ø3.5mm, connector bore Ø2.23mm."
+  },
+  {
+    "id": "P13_PaddleUpper",
+    "label": "13 • Slim upper pole / 细杆上段",
+    "volume_mm3": 328.728,
+    "valid": true,
+    "solids": 1,
+    "triangles": 4734,
+    "bounds": [
+      -42.87039456927597,
+      -8.374205976790646,
+      54.05970076558755,
+      -31.146096757756926,
+      -4.126081238135556,
+      89.25057135369987
+    ],
+    "color": [
+      0.4,
+      0.405,
+      0.4
+    ],
+    "instructions": "Ø1.83mm connector into Ø2.23mm bore; projected insertion 5mm, 0.30mm axial allowance. Glue after dry-fit."
+  },
+  {
+    "id": "P14_Bow",
+    "label": "14 • Chest bow / 独立立体蝴蝶结",
+    "volume_mm3": 59.483,
+    "valid": true,
+    "solids": 1,
+    "triangles": 13814,
+    "bounds": [
+      3.6230893097393535,
+      -13.049075101612173,
+      104.0,
+      14.13769282445852,
+      -8.55,
+      109.33333333333336
+    ],
+    "color": [
+      0.93,
+      0.85,
+      0.68
+    ],
+    "instructions": "Two loops, central knot, twin ribbon tails. D pin Ø2.5mm ×2.5mm insertion into torso; radial clearance 0.20mm. Glue after dry-fit."
+  },
+  {
+    "id": "FitCoupon",
+    "label": "T01 • Ø6 test, radial .15 / .20 / .25",
+    "volume_mm3": 2558.989,
+    "valid": true,
+    "solids": 1,
+    "triangles": 992,
+    "bounds": [
+      0.0,
+      0.0,
+      0.0,
+      26.0,
+      15.0,
+      8.0
+    ],
+    "color": [
+      0.7,
+      0.7,
+      0.7
+    ],
+    "instructions": "Fit test"
+  },
+  {
+    "id": "FitTestPin",
+    "label": "T02 • Ø6 test key",
+    "volume_mm3": 440.622,
+    "valid": true,
+    "solids": 1,
+    "triangles": 680,
+    "bounds": [
+      30.0,
+      1.0,
+      0.0,
+      42.0,
+      14.000000000000002,
+      7.000000000000001
+    ],
+    "color": [
+      0.7,
+      0.7,
+      0.7
+    ],
+    "instructions": "Fit test"
+  }
+]
