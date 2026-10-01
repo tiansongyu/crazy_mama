@@ -1,0 +1,28 @@
+{
+  "round": 10,
+  "title": "面部曲面收尾、眼镜定位销强化与导入倒角",
+  "config": {
+    "round": 10,
+    "title": "面部曲面收尾、眼镜定位销强化与导入倒角",
+    "fixed_parameterization": true,
+    "soft_jaw": true,
+    "compact_hair": true,
+    "restrained_features": true,
+    "warm_smile": true,
+    "slender_glasses": true,
+    "loose_blouse": true,
+    "hand_detail": true,
+    "bow_detail": true,
+    "print_refinement": true
+  },
+  "checked_at": "2026-09-30T23:55:22.115652",
+  "assembly_parts": 16,
+  "watertight_meshes": 18,
+  "interference_count": 0,
+  "head_stl_sha256": "04fb6f13bebfaa19826327e59d3d0db6b397b27664d56af0b1aebc7135657c63",
+  "hair_stl_sha256": "56d63121bd0ea88d7842966cd43e771716cd518298c6d85cafbd272b9d3bb379",
+  "glasses_stl_sha256": "d294b5beb0beeaa59c6a9a1aeb9d70181c8099413740098fc3ba12f693a8516c",
+  "torso_stl_sha256": "46801996c343469052a57c6969e22e8da61ab3a5c9221ff9c40f3f69bd216d6b",
+  "right_hand_stl_sha256": "8e73e0dbbec7b3c1187940bac687cb01ccd6da7bd2c0405dd8f12f386a6f03dc",
+  "bow_stl_sha256": "e6ae43c189b7771d96e3209caa0a93c1a6eb4858fc83ef6be1363b37c7ad45ab"
+}

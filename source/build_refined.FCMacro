@@ -3,7 +3,7 @@ from FreeCAD import Vector as V
 from PySide import QtCore
 import os, json, math, traceback
 
-ROOT='/home/ubuntu/github/structure/surfer_figurine_artboard_v3'
+ROOT='/home/ubuntu/github/structure/aunt_figurine_v4'
 SCALE=150.0/180.0
 FIT=.20/SCALE
 AXIAL=.30/SCALE
@@ -13,7 +13,7 @@ STANDING_LEAN_DEG=8.0
 RAW_LEAN_TANGENT=(31.0-(-9.5))/(165.0-7.0)
 POSE_SHEAR=RAW_LEAN_TANGENT-math.tan(math.radians(STANDING_LEAN_DEG))
 PINK=(.79,.30,.43); RED=(.73,.17,.29); NAVY=(.115,.145,.205)
-SKIN=(.76,.51,.40); BLACK=(.065,.068,.076); GRAY=(.40,.405,.40)
+SKIN=(.79,.57,.46); BLACK=(.065,.068,.076); GRAY=(.40,.405,.40)
 WHITE=(.92,.90,.85); GOLD=(.60,.47,.25)
 LOG=ROOT+'/source/build.log'
 def log(s):
@@ -105,11 +105,12 @@ def put(name,label,shape,color,notes,paint=None):
     pose_matrix=App.Matrix();pose_matrix.A13=-POSE_SHEAR;pose_matrix.A14=POSE_SHEAR*7
     if name not in ['P01_Board_Left','P02_Board_Right']:s=s.transformGeometry(pose_matrix)
     s.scale(SCALE)
+    if not s.isValid():s.fix(.0001,.000001,.01)
     if not s.isValid() or len(s.Solids)!=1:raise RuntimeError(name+' invalid after uniform scaling')
     obj=doc.addObject('PartDesign::Feature',name);obj.Label=label;obj.Shape=s
     obj.addProperty('App::PropertyString','AssemblyInstructions','Print').AssemblyInstructions=notes
     obj.addProperty('App::PropertyLength','RadialFitClearance','Print').RadialFitClearance=.20
-    obj.addProperty('App::PropertyString','VersionNotes','Reference').VersionNotes='V3: curved artistic skateboard; photo landmarks, adult proportions, leaning pose, sculpted clothing and face; 150mm nominal height'
+    obj.addProperty('App::PropertyString','VersionNotes','Reference').VersionNotes='V4: mature female portrait, short hair and spectacles; photo landmarks, adult proportions, leaning pose, sculpted clothing and face; 150mm nominal height'
     obj.ViewObject.ShapeColor=color;obj.ViewObject.DisplayMode='Flat Lines';obj.ViewObject.LineColor=(.16,.16,.18);obj.ViewObject.LineWidth=.5
     def unpose(p):
         p=p/SCALE
@@ -124,9 +125,13 @@ def put(name,label,shape,color,notes,paint=None):
 
 exec(compile(open(ROOT+'/source/artboard_geometry.py').read(),ROOT+'/source/artboard_geometry.py','exec'),globals())
 
+exec(compile(open(ROOT+'/source/aunt_geometry.py').read(),ROOT+'/source/aunt_geometry.py','exec'),globals())
+
+exec(compile(open(ROOT+'/source/iteration_details.py').read(),ROOT+'/source/iteration_details.py','exec'),globals())
+
 try:
     open(LOG,'w').close()
-    doc=App.newDocument('Photo_Figure_Artboard_V3');parts=[];base_colors={}
+    doc=App.newDocument('Aunt_Figure_V4');parts=[];base_colors={}
     assembly=doc.addObject('App::DocumentObjectGroup','Assembly');assembly.Label='01 • Refined assembly / 细化装配'
     params=doc.addObject('Spreadsheet::Sheet','Dimensions');params.Label='00 • Dimensions / 尺寸'
     rows=[('Parameter','Finished mm'),('Nominal total height','150'),('Board length','183.33'),('Board width','46.67'),('Board thickness','5.83'),('Radial joint clearance','0.20'),('Axial joint clearance','0.30'),('Head yaw degrees','-8'),('Lean from board normal degrees','8'),('Angle to board surface degrees','82'),('Reference','Single blurry photo; estimated proportions'),('Material','PLA / PETG'),('Suggested layer height','0.12 / 0.16')]
@@ -159,7 +164,12 @@ try:
         s=union([shoe,ankle,leg,d_pin((x,0,2.3),3,5),d_pin((topx,0,81.8),3.5,6.2)])
         put('P%02d_Leg'%idx,'%02d • %s leg / 裤腿、脚踝与鞋'%(idx,'Left' if idx==4 else 'Right'),s,NAVY,'Foot D key Ø5mm; waist D key Ø5.83mm. Small exposed ankle and low shoe vamp.',lambda c: BLACK if c.z<14.85 else SKIN if c.z<18.7 else NAVY)
 
-    body_rows=[((15,0,82),23,12.5,11.0),((15.5,0,84),23.4,13,11.6),((16.5,0,89),24.1,14.2,12.3),((18,0,98),24.6,15.2,12.8),((20.5,0,109),24.0,15.0,12.8),((23,0,120),24.2,13.8,12.2),((25,0,130),24.8,13.2,11.5),((26.5,0,138),24.5,12.4,10.8),((28,0,145),18.5,9.8,9.0),((29,0,150.5),10.4,7.8,7.8)]
+    body_rows=[((15,0,82),23,12.5,11.0),((15.5,0,84),23.4,13,11.6),((16.5,0,89),24.1,14.2,12.3),((18,0,98),24.0,15.0,12.8),((20.5,0,109),23.0,14.1,12.8),((23,0,120),23.8,14.3,12.2),((25,0,130),24.8,13.6,11.5),((26.5,0,138),24.5,12.4,10.8),((28,0,145),18.5,9.8,9.0),((29,0,150.5),10.4,7.8,7.8)]
+    if AUNT_CFG.get('loose_blouse'):
+        body_rows[3]=((18,0,98),24.5,15.2,12.8)
+        body_rows[4]=((20.5,0,109),24.0,14.8,12.8)
+        body_rows[5]=((23,0,120),24.2,14.0,12.2)
+        body_rows[6]=((25,0,130),24.6,13.4,11.5)
     body=cloth_loft(body_rows,power=2.2,kind='shirt')
     body=union([body,ellipsoid((8,0,136),(10,9,9)),ellipsoid((45,0,136),(10,9,9))])
     body=body.cut(box(-100,-60,125,102,120,40)).cut(box(51,-60,125,80,120,40))
@@ -174,6 +184,7 @@ try:
     bow_parts.append(zloft([((bow_x+1.6,bow_y-1.0,bow_z-4.0),1.2,.75),((bow_x+1.3,bow_y-1.0,bow_z-2.5),.9,.8),((bow_x+.5,bow_y-.9,bow_z-.4),.9,.85)]))
     bow=union(bow_parts).cut(body)
     bow=bow.fuse(d_pin((bow_x,bow_y-.3,bow_z),1.5,3.3,V(0,1,0)))
+    if AUNT_CFG.get('bow_detail'):bow=bow_detail(bow,bow_x,bow_y,bow_z)
     bow_hole=d_pin((bow_x,bow_y-.3,bow_z),1.5,3.3+AXIAL,V(0,1,0),FIT)
     body=body.cut(bow_hole)
     torso=put('P06_Torso','06 • Sweater / 宽松上衣与布料褶皱',body,PINK,'Photo-based sweater proportions and cloth relief. Central D socket for separate chest bow.')
@@ -195,40 +206,19 @@ try:
     hand_parts=[ellipsoid((53.2,-2.2,81.4),(3.4,2.3,4.2)),ellipsoid((50.4,-3.4,82.0),(1.3,1.5,2.3))]
     for fx,fz in [(50.8,78.1),(52.2,77.4),(53.6,77.7),(54.8,78.5)]:hand_parts.append(ellipsoid((fx,-2.7,fz),(1.05,1.5,2.7)))
     right=union([right]+hand_parts+[d_pin((51.6,0,136),3,6.6,V(-1,0,0))])
+    if AUNT_CFG.get('hand_detail'):
+        for tool in hand_detail_tools('right'):right=safe_detail(right,tool,'natural finger joint')
     put('P08_RightArm','08 • Right arm / 下垂衣袖与自然手指',right,PINK,'Key into right shoulder. Separate thumb and four rounded fingertip contours are integral.',lambda c: SKIN if c.z<84.4 else PINK)
 
-    head_rows=[((29.7,-.5,153.2),5.8,6.4,4.8),((30.2,-.4,155.2),7.8,7.8,6.5),((30.7,-.1,158.2),9.8,8.8,8.1),((31,0,162),10.8,9.0,8.9),((31,.2,166),10.6,8.6,9.2),((31.1,.3,171),9.4,7.6,8.3),((31.1,.3,175.5),6.9,5.6,6.4),((31.1,.3,178.5),3.7,3.1,3.4),((31.1,.3,179.8),.5,.5,.5)]
-    skull=cloth_loft(head_rows,power=2.02)
-    neck=Part.makeCylinder(5.5,5.2,V(29,0,150.5))
-    features=[skull,neck,d_pin((29,0,144.5),3.5,6.2),ellipsoid((20.5,.4,162),(1.9,2.2,3.1)),ellipsoid((41.5,.4,162),(1.9,2.2,3.1)),ellipsoid((30.4,-8.2,162),(1.2,1.45,3.0)),ellipsoid((30.4,-9.4,159.5),(1.55,1.6,1.25)),ellipsoid((29.1,-9.0,159.1),(.8,1.05,.75)),ellipsoid((31.7,-9.0,159.1),(.8,1.05,.75))]
-    head=union(features)
-    for x in (26.6,34.8):
-        ey=surface_front(head_rows,x,164.2,2.02)
-        head=safe_detail(head,ellipsoid((x,ey-.02,164.2),(1.65,.58,.65)),'eye socket')
-        by=surface_front(head_rows,x,165.5,2.02)
-        head=safe_detail(head,ellipsoid((x,by+.1,165.5),(2.25,.50,.40)),'subtle brow','fuse')
-    mouth=[]
-    for x,z in [(27.1,157.4),(30.5,156.0),(33.9,157.4)]:mouth.append((x,surface_front(head_rows,x,z,2.02)-.04,z))
-    head=safe_detail(head,tube(mouth,.40/SCALE),'upturned smiling mouth')
-    for pts in [[(26.0,-7.7,159.0),(26.5,-8.1,158.2),(27.1,-8.1,157.4)],[(35.0,-7.7,159.0),(34.5,-8.1,158.2),(33.9,-8.1,157.4)]]:
-        head=safe_detail(head,tube(pts,.18/SCALE),'smile cheek fold')
-    for z in (167.6,169.2):
-        pts=[(x,surface_front(head_rows,x,z,2.02)-.03,z+.12*(abs(x-31)/4)) for x in (27.5,31,34.5)]
-        head=safe_detail(head,tube(pts,.19/SCALE),'forehead wrinkle')
-    for x in (29.65,31.15):head=safe_detail(head,Part.makeSphere(.34,V(x,-10.65,159.1)),'nostril')
-    for x in (20.0,42.0):head=safe_detail(head,ellipsoid((x,-1.9,162),(1.0,.8,1.8)),'ear concha')
-    head=head_turn(head)
-    put('P09_Head','09 • Smiling sculpted head / 微笑与老年面部细节',head,SKIN,'Raised smile corners, cheek folds, eye sockets, nose bridge and alae, forehead lines, open ear recesses. Turned 8° toward photo left.')
-
+    head_rows=FEMALE_ROWS
+    head,hair,glasses=build_aunt_parts()
+    put('P09_Head','09 • Smiling aunt / 柔和面颊、眼睑与自然微笑',head,SKIN,'Mature female portrait with filled smiling eyes, integrated nose and subtle smile. Two glasses locating sockets.')
     outer=Part.Face(ellipse_wire((29,0,150.5),10.3,7.7)).extrude(V(0,0,2.2))
     inner=Part.Face(ellipse_wire((29,0,150.3),5.5+.30/SCALE,5.5+.30/SCALE)).extrude(V(0,0,2.6))
     collar=outer.cut(inner)
     put('P10_Collar','10 • Crew collar / 宽白色圆领',collar,WHITE,'Slides over neck before mounting head. 0.30mm radial neck clearance.')
-    inner_rows=[(c,rx+FIT,fr+FIT,ba+FIT) for c,rx,fr,ba in head_rows]
-    outer_rows=[(c,rx+FIT+1.2/SCALE,fr+FIT+1.2/SCALE,ba+FIT+1.2/SCALE) for c,rx,fr,ba in head_rows]
-    hair=cloth_loft(outer_rows,power=2.02).cut(cloth_loft(inner_rows,power=2.02))
-    hair=hair.common(box(10,.8,165.8,45,30,20)).common(ellipsoid((31,3,166),(14,12,13)));hair=head_turn(hair)
-    put('P11_Hair','11 • Receding gray hair / 两侧与后脑灰发',hair,GRAY,'Horseshoe rear hair band, bald crown preserved. Approx 1.2mm wall and 0.20mm seating clearance. Glue.')
+    put('P11_Hair','11 • Short side-part hair / 短侧分发型与发丝',hair,(.42,.40,.37) if AUNT_CFG.get('compact_hair') else (.30,.285,.27),'Full short hair shell, side part and engraved strands; nominal 0.20 mm seating clearance. Glue.')
+    put('P15_Glasses','15 • Oval spectacles / 独立椭圆眼镜',glasses,(.24,.19,.16) if AUNT_CFG.get('slender_glasses') else (.25,.13,.14),'Oval rims and two locating pegs diameter %.3f mm; 0.20 mm nominal radial clearance. Dry-fit and glue.'%((1.7 if AUNT_CFG.get('print_refinement') else 1.5)*SCALE))
 
     def at(t):return pa+axis*t
     length=(pb-pa).Length;split=66.0
@@ -248,6 +238,8 @@ try:
     testpin=d_pin((36/SCALE,7.5/SCALE,0),3/SCALE,5/SCALE).fuse(box(30/SCALE,1/SCALE,5/SCALE,12/SCALE,13/SCALE,2/SCALE))
     tp=doc.addObject('PartDesign::Feature','FitTestPin');ss=testpin.copy();ss.scale(SCALE);tp.Shape=ss;tp.Label='T02 • Ø6 test key';coupons.addObject(tp);tp.Visibility=False
 
+    if AUNT_CFG.get('print_refinement'):add_micro_fit_test(co,tp)
+
     guides=doc.addObject('App::DocumentObjectGroup','Construction');guides.Label='03 • Photo-based construction / 照片比例参考 (hidden)'
     for i,r in enumerate(body_rows):
         c,rx,fr,ba=r;shape=cloth_wire(c,rx,fr,ba,2.2,'shirt');pm=App.Matrix();pm.A13=-POSE_SHEAR;pm.A14=POSE_SHEAR*7;shape=shape.transformGeometry(pm);shape.scale(SCALE)
@@ -263,11 +255,11 @@ try:
     with open(ROOT+'/source/parts_manifest.json','w') as f:json.dump(report,f,ensure_ascii=False,indent=2)
     pole_vector=V(axis.x-POSE_SHEAR*axis.z,axis.y,axis.z).normalize()
     with open(ROOT+'/source/design_parameters.json','w') as f:json.dump({'scale':SCALE,'height_mm':150,'radial_clearance_mm':.2,'axial_clearance_mm':.3,'standing_lean_from_board_normal_deg':STANDING_LEAN_DEG,'pose_shear':POSE_SHEAR,'pole_axis':[pole_vector.x,pole_vector.y,pole_vector.z],'head_yaw_deg':HEAD_YAW,'head_rows':head_rows,'body_rows':body_rows,'badge_center':badge_c},f,indent=2)
-    Part.export(parts,ROOT+'/Photo_Figure_Artboard_Assembly.step')
+    Part.export(parts,ROOT+'/Aunt_Figure_Assembly.step')
     Gui.activateWorkbench('PartWorkbench');Gui.getMainWindow().showNormal();Gui.getMainWindow().setGeometry(0,0,1600,1200)
     direction=V(.26,-.91,.31);rightv=V(.96,.275,0);up=direction.cross(rightv)
     Gui.activeDocument().activeView().setCameraOrientation(App.Rotation(rightv,up,direction,'ZXY').Q)
-    Gui.activeDocument().activeView().fitAll();Gui.updateGui();doc.recompute();doc.saveAs(ROOT+'/Photo_Figure_Artboard_V3.FCStd')
+    Gui.activeDocument().activeView().fitAll();Gui.updateGui();doc.recompute();doc.saveAs(ROOT+'/Aunt_Figure_V4.FCStd')
     Gui.activeDocument().activeView().saveImage(ROOT+'/previews/freecad_refined.png',1500,1300,'White')
     log('BUILD_COMPLETE '+str(len(parts))+' assembly pieces')
 except Exception:log(traceback.format_exc())

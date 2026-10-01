@@ -1,0 +1,265 @@
+import FreeCAD as App, FreeCADGui as Gui, Part, MeshPart
+from FreeCAD import Vector as V
+from PySide import QtCore
+import os, json, math, traceback
+
+ROOT='/home/ubuntu/github/structure/aunt_figurine_v4'
+SCALE=150.0/180.0
+FIT=.20/SCALE
+AXIAL=.30/SCALE
+HEAD_YAW=-8.0
+STANDING_LEAN_DEG=8.0
+# Calibrated against the board normal, after removing the board's image roll.
+RAW_LEAN_TANGENT=(31.0-(-9.5))/(165.0-7.0)
+POSE_SHEAR=RAW_LEAN_TANGENT-math.tan(math.radians(STANDING_LEAN_DEG))
+PINK=(.79,.30,.43); RED=(.73,.17,.29); NAVY=(.115,.145,.205)
+SKIN=(.79,.57,.46); BLACK=(.065,.068,.076); GRAY=(.40,.405,.40)
+WHITE=(.92,.90,.85); GOLD=(.60,.47,.25)
+LOG=ROOT+'/source/build.log'
+def log(s):
+    with open(LOG,'a') as f:f.write(str(s)+'\n')
+    App.Console.PrintMessage(str(s)+'\n')
+if '_command_timer' in globals():_command_timer.stop()
+def poll_commands():
+    path=ROOT+'/source/request.py'
+    if os.path.exists(path):
+        code=open(path).read();os.unlink(path)
+        try:exec(compile(code,path,'exec'),globals())
+        except Exception:log(traceback.format_exc())
+_command_timer=QtCore.QTimer();_command_timer.timeout.connect(poll_commands);_command_timer.start(1000)
+
+def box(x,y,z,dx,dy,dz):return Part.makeBox(dx,dy,dz,V(x,y,z))
+def ellipsoid(c,r):
+    m=App.Matrix();m.A11=r[0];m.A22=r[1];m.A33=r[2]
+    s=Part.makeSphere(1).transformGeometry(m);s.translate(V(*c));return s
+def ellipse_wire(c,rx,ry,normal=V(0,0,1)):
+    edge=Part.Ellipse(V(),max(rx,ry),min(rx,ry)).toShape()
+    rot=App.Rotation(V(0,0,1),normal)
+    if ry>rx:rot=rot.multiply(App.Rotation(V(0,0,1),90))
+    edge.Placement=App.Placement(V(*c),rot);return Part.Wire([edge])
+def loft(rows):return Part.makeLoft([ellipse_wire(*r) for r in rows],True,False)
+def zloft(rows):return loft([(c,rx,ry,V(0,0,1)) for c,rx,ry in rows])
+def union(shapes):
+    s=shapes[0]
+    for other in shapes[1:]:s=s.fuse(other)
+    return s
+def d_pin(c,r,h,axis=V(0,0,1),clearance=0):
+    rr=r+clearance;s=Part.makeCylinder(rr,h)
+    s=s.cut(box(r*.72+clearance,-rr-1,-1,rr+2,2*rr+2,h+2))
+    if not clearance:
+        edges=[e for e in s.Edges if len(e.Vertexes)>0 and (all(abs(v.Point.z)<1e-5 for v in e.Vertexes) or all(abs(v.Point.z-h)<1e-5 for v in e.Vertexes))]
+        try:s=s.makeChamfer(.20/SCALE,edges)
+        except Exception:pass
+    s.Placement=App.Placement(V(*c),App.Rotation(V(0,0,1),axis));return s
+
+def cloth_wire(c,rx,front,back,power=2.1,kind='plain',phase=0):
+    pts=[];z=c[2]
+    for i in range(64):
+        a=2*math.pi*i/64;co=math.cos(a);si=math.sin(a)
+        ux=math.copysign(abs(co)**(2/power),co);uy=math.copysign(abs(si)**(2/power),si)
+        rib=0;fold=0
+        if kind=='shirt':
+            hem=math.exp(-((z-84)/3.5)**2)
+            rib=.19*hem*math.cos(24*a)
+            if si<0:
+                fade=math.exp(-((z-97)/17)**2)
+                fold=.65*fade*(math.exp(-((ux+.62+.002*(z-96))/.11)**2)-.68*math.exp(-((ux-.57)/.12)**2))
+                fold+=.30*math.exp(-((z-132)/9)**2)*math.cos(a*5)
+        if kind=='pants':
+            rib=.17*math.exp(-((z-21)/3)**2)*math.cos(18*a)
+            fold=.40*math.exp(-((z-52)/8)**2)*math.sin(3*a+phase)
+            fold+=.30*math.exp(-((z-26)/7)**2)*math.cos(4*a+phase)
+        rr=rx+rib
+        depth=(front if si<0 else back)+rib+(fold if si<0 else .15*fold)
+        pts.append(V(c[0]+rr*ux,c[1]+depth*uy,c[2]))
+    curve=Part.BSplineCurve();curve.interpolate(Points=pts,PeriodicFlag=True)
+    return Part.Wire([curve.toShape()])
+def cloth_loft(rows,power=2.1,kind='plain',phase=0):
+    return Part.makeLoft([cloth_wire(c,rx,fr,ba,power,kind,phase) for c,rx,fr,ba in rows],True,False)
+def interp(rows,z):
+    for a,b in zip(rows,rows[1:]):
+        if a[0][2]<=z<=b[0][2]:
+            t=(z-a[0][2])/(b[0][2]-a[0][2])
+            return tuple(a[0][j]+t*(b[0][j]-a[0][j]) for j in range(3)),*[a[j]+t*(b[j]-a[j]) for j in range(1,4)]
+    return rows[0] if z<rows[0][0][2] else rows[-1]
+def surface_front(rows,x,z,power=2.0):
+    c,rx,fr,ba=interp(rows,z);u=min(.999,abs((x-c[0])/rx))
+    return c[1]-fr*(1-u**power)**(1/power)
+def tube(points,r):
+    curve=Part.BSplineCurve();curve.interpolate(Points=[V(*p) for p in points]);edge=curve.toShape()
+    tangent=edge.tangentAt(edge.FirstParameter)
+    profile=Part.Wire([Part.makeCircle(r,V(*points[0]),tangent)])
+    return Part.Wire([edge]).makePipeShell([profile],True,False)
+def safe_detail(shape,detail,tag,operation='cut'):
+    candidate=shape.cut(detail) if operation=='cut' else shape.fuse(detail)
+    if candidate.isValid() and len(candidate.Solids)==1 and candidate.Volume>0:return candidate
+    log('Detail rejected by solid check: '+tag);return shape
+def head_turn(shape):
+    s=shape.copy();s.rotate(V(29,0,150.5),V(0,0,1),HEAD_YAW);return s
+
+def put(name,label,shape,color,notes,paint=None):
+    if not shape.isValid() or len(shape.Solids)!=1 or shape.Volume<=0:
+        log([(s.Volume,str(s.BoundBox)) for s in shape.Solids])
+        raise RuntimeError(name+' invalid or disconnected')
+    s=shape.copy()
+    pose_matrix=App.Matrix();pose_matrix.A13=-POSE_SHEAR;pose_matrix.A14=POSE_SHEAR*7
+    if name not in ['P01_Board_Left','P02_Board_Right']:s=s.transformGeometry(pose_matrix)
+    s.scale(SCALE)
+    if not s.isValid():s.fix(.0001,.000001,.01)
+    if not s.isValid() or len(s.Solids)!=1:raise RuntimeError(name+' invalid after uniform scaling')
+    obj=doc.addObject('PartDesign::Feature',name);obj.Label=label;obj.Shape=s
+    obj.addProperty('App::PropertyString','AssemblyInstructions','Print').AssemblyInstructions=notes
+    obj.addProperty('App::PropertyLength','RadialFitClearance','Print').RadialFitClearance=.20
+    obj.addProperty('App::PropertyString','VersionNotes','Reference').VersionNotes='V4: mature female portrait, short hair and spectacles; photo landmarks, adult proportions, leaning pose, sculpted clothing and face; 150mm nominal height'
+    obj.ViewObject.ShapeColor=color;obj.ViewObject.DisplayMode='Flat Lines';obj.ViewObject.LineColor=(.16,.16,.18);obj.ViewObject.LineWidth=.5
+    def unpose(p):
+        p=p/SCALE
+        return p if name in ['P01_Board_Left','P02_Board_Right'] else V(p.x+POSE_SHEAR*(p.z-7),p.y,p.z)
+    if paint:
+        if name in ['P01_Board_Left','P02_Board_Right']:
+            obj.ViewObject.DiffuseColor=[(.89,.66,.27) if any(paint(unpose(p))!=RED for p in [f.CenterOfMass]+[v.Point for v in f.Vertexes]) else RED for f in s.Faces]
+        else:obj.ViewObject.DiffuseColor=[paint(unpose(f.CenterOfMass)) for f in s.Faces]
+    assembly.addObject(obj);parts.append(obj);base_colors[name]=list(color)
+    log('Created '+name+' volume '+str(round(s.Volume,2)))
+    return obj
+
+exec(compile(open(ROOT+'/source/artboard_geometry.py').read(),ROOT+'/source/artboard_geometry.py','exec'),globals())
+
+exec(compile(open(ROOT+'/source/aunt_geometry.py').read(),ROOT+'/source/aunt_geometry.py','exec'),globals())
+
+exec(compile(open(ROOT+'/source/iteration_details.py').read(),ROOT+'/source/iteration_details.py','exec'),globals())
+
+try:
+    open(LOG,'w').close()
+    doc=App.newDocument('Aunt_Figure_V4');parts=[];base_colors={}
+    assembly=doc.addObject('App::DocumentObjectGroup','Assembly');assembly.Label='01 • Refined assembly / 细化装配'
+    params=doc.addObject('Spreadsheet::Sheet','Dimensions');params.Label='00 • Dimensions / 尺寸'
+    rows=[('Parameter','Finished mm'),('Nominal total height','150'),('Board length','183.33'),('Board width','46.67'),('Board thickness','5.83'),('Radial joint clearance','0.20'),('Axial joint clearance','0.30'),('Head yaw degrees','-8'),('Lean from board normal degrees','8'),('Angle to board surface degrees','82'),('Reference','Single blurry photo; estimated proportions'),('Material','PLA / PETG'),('Suggested layer height','0.12 / 0.16')]
+    for i,(a,b) in enumerate(rows,1):params.set('A'+str(i),a);params.set('B'+str(i),b)
+    params.setColumnWidth('A',220);params.setColumnWidth('B',290)
+
+    board,ART_PATHS=build_artboard()
+    def posed_tool(s):
+        pm=App.Matrix();pm.A13=-POSE_SHEAR;pm.A14=POSE_SHEAR*7
+        return s.transformGeometry(pm)
+    for x in (-20,1):board=board.cut(posed_tool(d_pin((x,0,1.7),3,5.5,clearance=FIT)))
+    aft=board.common(posed_tool(box(-120,-40,-1,120,80,40)));fore=board.common(posed_tool(box(0,-40,-1,120,80,40)))
+    for y in (-12,12):
+        aft=aft.cut(posed_tool(Part.makeCylinder(2+FIT,8.3,V(0,y,3.5),V(-1,0,0))))
+        fore=fore.cut(posed_tool(Part.makeCylinder(2+FIT,8.3,V(0,y,3.5),V(1,0,0))))
+    put('P01_Board_Left','01 • Board left / 板体左半',aft,RED,'Two Ø3.33mm dowels, Ø3.73mm bores. Dry-fit, then glue seam. Curved artistic deck.',paint=art_color)
+    put('P02_Board_Right','02 • Board right / 板体右半',fore,RED,'Curved nose and tail, rail concave, engraved wave and petal motifs. Foot sockets retained.',paint=art_color)
+    for i,y in enumerate((-12,12),1):
+        pin=Part.makeCylinder(2,15.4,V(-7.7,y,3.5),V(1,0,0));pin=pin.makeChamfer(.30/SCALE,pin.Edges)
+        put('P03_Dowel_'+str(i),'03'+('a' if i==1 else 'b')+' • Board dowel / 板体定位销',pin,WHITE,'Ø3.33 × 12.83mm, two pieces. Chamfered ends.')
+
+    leg_specs=[(4,-20,4,[(-20,18.6),(-18,27),(-14,41),(-9,52),(-3,67),(4,82)],-.3),(5,1,26,[(1,18.6),(4,28),(10,42),(16,54),(22,69),(26,82)],.6)]
+    for idx,x,topx,path,phase in leg_specs:
+        shoe=zloft([((x,-3.5,7),7.8,11.4),((x,-3.8,8.2),8.1,12.4),((x,-4.0,9.4),8.2,12.7),((x,-3.5,11),7.7,12.0),((x,-2.0,13.5),6.0,9.0),((x,-.5,14.8),4.5,5.6)])
+        shoe.rotate(V(x,0,0),V(0,0,1),-65 if idx==4 else -50)
+        ankle=zloft([((x,0,13.7),4.1,4.7),((x+.4,0,17),4.3,4.8),((x+1.2,0,20),4.6,5.2)])
+        sizes=[(5.6,6.3,6.0),(6.4,7.0,6.7),(7.0,7.6,7.2),(7.3,7.8,7.3),(8.6,8.8,8.5),(9.5,9.0,8.8)]
+        leg_rows=[((cx,0,z),rx,fr,ba) for (cx,z),(rx,fr,ba) in zip(path,sizes)]
+        leg=cloth_loft(leg_rows,power=2.18,kind='pants',phase=phase)
+        s=union([shoe,ankle,leg,d_pin((x,0,2.3),3,5),d_pin((topx,0,81.8),3.5,6.2)])
+        put('P%02d_Leg'%idx,'%02d • %s leg / 裤腿、脚踝与鞋'%(idx,'Left' if idx==4 else 'Right'),s,NAVY,'Foot D key Ø5mm; waist D key Ø5.83mm. Small exposed ankle and low shoe vamp.',lambda c: BLACK if c.z<14.85 else SKIN if c.z<18.7 else NAVY)
+
+    body_rows=[((15,0,82),23,12.5,11.0),((15.5,0,84),23.4,13,11.6),((16.5,0,89),24.1,14.2,12.3),((18,0,98),24.0,15.0,12.8),((20.5,0,109),23.0,14.1,12.8),((23,0,120),23.8,14.3,12.2),((25,0,130),24.8,13.6,11.5),((26.5,0,138),24.5,12.4,10.8),((28,0,145),18.5,9.8,9.0),((29,0,150.5),10.4,7.8,7.8)]
+    if AUNT_CFG.get('loose_blouse'):
+        body_rows[3]=((18,0,98),24.5,15.2,12.8)
+        body_rows[4]=((20.5,0,109),24.0,14.8,12.8)
+        body_rows[5]=((23,0,120),24.2,14.0,12.2)
+        body_rows[6]=((25,0,130),24.6,13.4,11.5)
+    body=cloth_loft(body_rows,power=2.2,kind='shirt')
+    body=union([body,ellipsoid((8,0,136),(10,9,9)),ellipsoid((45,0,136),(10,9,9))])
+    body=body.cut(box(-100,-60,125,102,120,40)).cut(box(51,-60,125,80,120,40))
+    body=body.common(box(-80,-50,75,160,100,75.49))
+    for x in (4,26):body=body.cut(d_pin((x,0,81.7),3.5,6.3+AXIAL,clearance=FIT))
+    nh=d_pin((29,0,144.5-AXIAL),3.5,6.2+AXIAL,clearance=FIT);nh.rotate(V(29,0,0),V(0,0,1),HEAD_YAW)
+    body=body.cut(nh).cut(d_pin((2,0,136),3,6+AXIAL,V(1,0,0),FIT)).cut(d_pin((51,0,136),3,6+AXIAL,V(-1,0,0),FIT))
+    bow_z=129.0;bow_x=24.8;bow_y=surface_front(body_rows,bow_x,bow_z,2.2)
+    badge_c=(bow_x,bow_y,bow_z)
+    bow_parts=[ellipsoid((bow_x,bow_y-.9,bow_z),(1.3,1.5,1.45)),ellipsoid((bow_x-3.1,bow_y-.85,bow_z+.15),(3.2,1.25,2.05)),ellipsoid((bow_x+3.1,bow_y-.85,bow_z+.15),(3.2,1.25,2.05))]
+    bow_parts.append(zloft([((bow_x-1.5,bow_y-1.0,bow_z-4.2),1.2,.75),((bow_x-1.2,bow_y-1.0,bow_z-2.5),.9,.8),((bow_x-.5,bow_y-.9,bow_z-.4),.9,.85)]))
+    bow_parts.append(zloft([((bow_x+1.6,bow_y-1.0,bow_z-4.0),1.2,.75),((bow_x+1.3,bow_y-1.0,bow_z-2.5),.9,.8),((bow_x+.5,bow_y-.9,bow_z-.4),.9,.85)]))
+    bow=union(bow_parts).cut(body)
+    bow=bow.fuse(d_pin((bow_x,bow_y-.3,bow_z),1.5,3.3,V(0,1,0)))
+    if AUNT_CFG.get('bow_detail'):bow=bow_detail(bow,bow_x,bow_y,bow_z)
+    bow_hole=d_pin((bow_x,bow_y-.3,bow_z),1.5,3.3+AXIAL,V(0,1,0),FIT)
+    body=body.cut(bow_hole)
+    torso=put('P06_Torso','06 • Sweater / 宽松上衣与布料褶皱',body,PINK,'Photo-based sweater proportions and cloth relief. Central D socket for separate chest bow.')
+    torso.addProperty('App::PropertyString','LoftProfiles','Reference').LoftProfiles=json.dumps(body_rows)
+
+    left=loft([((2,0,136),7.2,7.2,V(-1,0,0)),((-4,-.3,125),7.5,7.7,V(-.55,0,-.84)),((-10,-1.5,115),7.2,7.0,V(-.7,-.1,-.7)),((-17,-3.5,107),6.5,6.2,V(-.84,-.2,-.5)),((-22,-5.5,102),5.8,5.5,V(-.9,-.2,-.4)),((-24,-6.2,100.5),5.7,5.4,V(-.95,-.2,-.2)),((-25.5,-6.5,99.6),4.5,4.3,V(-1,-.15,-.1))])
+    left=left.common(box(-100,-50,60,101.99,100,100))
+    hp=[ellipsoid((-27.0,-7.2,99.0),(3.0,3.5,3.1)),ellipsoid((-30,-7.5,98),(4.7,3.4,3.5)),ellipsoid((-27.0,-9.3,99.6),(1.8,1.7,2.1))]
+    for fx in (-33,-31.5,-30,-28.5):hp.append(ellipsoid((fx,-8.5,97.3),(1.1,2.0,2.6)))
+    left=union([left]+hp+[d_pin((1.4,0,136),3,6.6,V(1,0,0))])
+    left=safe_detail(left,body,'shoulder contour clearance')
+    pa=V(-65,-7.5,9.2);pb=V(-30,-7.5,101);axis=(pb-pa).normalize()
+    left=left.cut(Part.makeCylinder(2.1+.25/SCALE,34,pa+axis*((82-pa.z)/axis.z),axis))
+    for xx in (-32.3,-30.8,-29.3):left=safe_detail(left,tube([(xx,-10.2,95.8),(xx,-10.6,97.1),(xx+.3,-10.2,98.8)],.24),'finger crease')
+    put('P07_LeftArm','07 • Left arm / 左袖、拇指与握杆手',left,PINK,'Key into left shoulder; slide upper pole through the hand, then connect the lower pole.',lambda c: SKIN if c.x<-25.3 and c.z<102.5 else PINK)
+
+    right=loft([((51,0,136),7.2,7.2,V(1,0,0)),((55,0,125),7.5,7.8,V(.2,0,-1)),((56,-.2,113),7.0,7.4,V(0,0,-1)),((55,-.6,98),6.1,6.5,V(-.08,0,-1)),((54,-1.2,87),5.2,5.6,V(-.1,0,-1)),((54,-1.3,85.5),5.4,5.5,V(0,0,-1)),((53.7,-1.5,84.2),4.2,4.5,V(0,0,-1))])
+    right=right.common(box(51.01,-50,60,70,100,100))
+    hand_parts=[ellipsoid((53.2,-2.2,81.4),(3.4,2.3,4.2)),ellipsoid((50.4,-3.4,82.0),(1.3,1.5,2.3))]
+    for fx,fz in [(50.8,78.1),(52.2,77.4),(53.6,77.7),(54.8,78.5)]:hand_parts.append(ellipsoid((fx,-2.7,fz),(1.05,1.5,2.7)))
+    right=union([right]+hand_parts+[d_pin((51.6,0,136),3,6.6,V(-1,0,0))])
+    if AUNT_CFG.get('hand_detail'):
+        for tool in hand_detail_tools('right'):right=safe_detail(right,tool,'natural finger joint')
+    put('P08_RightArm','08 • Right arm / 下垂衣袖与自然手指',right,PINK,'Key into right shoulder. Separate thumb and four rounded fingertip contours are integral.',lambda c: SKIN if c.z<84.4 else PINK)
+
+    head_rows=FEMALE_ROWS
+    head,hair,glasses=build_aunt_parts()
+    put('P09_Head','09 • Smiling aunt / 柔和面颊、眼睑与自然微笑',head,SKIN,'Mature female portrait with filled smiling eyes, integrated nose and subtle smile. Two glasses locating sockets.')
+    outer=Part.Face(ellipse_wire((29,0,150.5),10.3,7.7)).extrude(V(0,0,2.2))
+    inner=Part.Face(ellipse_wire((29,0,150.3),5.5+.30/SCALE,5.5+.30/SCALE)).extrude(V(0,0,2.6))
+    collar=outer.cut(inner)
+    put('P10_Collar','10 • Crew collar / 宽白色圆领',collar,WHITE,'Slides over neck before mounting head. 0.30mm radial neck clearance.')
+    put('P11_Hair','11 • Short side-part hair / 短侧分发型与发丝',hair,(.42,.40,.37) if AUNT_CFG.get('compact_hair') else (.30,.285,.27),'Full short hair shell, side part and engraved strands; nominal 0.20 mm seating clearance. Glue.')
+    put('P15_Glasses','15 • Oval spectacles / 独立椭圆眼镜',glasses,(.24,.19,.16) if AUNT_CFG.get('slender_glasses') else (.25,.13,.14),'Oval rims and two locating pegs Ø1.25 mm; 0.20 mm nominal radial clearance. Dry-fit and glue.')
+
+    def at(t):return pa+axis*t
+    length=(pb-pa).Length;split=66.0
+    base_plate=zloft([((pa.x+10,-7.5,7.01),12.8,4.6),((pa.x+10,-7.5,8.2),13.1,5.0),((pa.x+10,-7.5,9.7),11.9,4.1)])
+    lower=base_plate.fuse(Part.makeCylinder(2.1,split,pa,axis))
+    lower=lower.cut(Part.makeCylinder(1.1+FIT,6+AXIAL+.20,at(split+.20),-axis))
+    put('P12_PaddleLower','12 • Pole lower & oval foot / 细杆下段与贴板椭圆底片',lower,GRAY,'Oval end sits nearly flat on board, following photo. Shaft Ø3.5mm, connector bore Ø2.23mm.')
+    upper=Part.makeCylinder(2.1,length+3.8-split,at(split),axis)
+    upper=upper.fuse(Part.makeCylinder(1.1,6.2,at(split+.2),-axis)).fuse(Part.makeSphere(2.55,at(length+3.8)))
+    put('P13_PaddleUpper','13 • Slim upper pole / 细杆上段',upper,GRAY,'Ø1.83mm connector into Ø2.23mm bore; projected insertion 5mm, 0.30mm axial allowance. Glue after dry-fit.')
+    put('P14_Bow','14 • Chest bow / 独立立体蝴蝶结',bow,(.93,.85,.68),'Two loops, central knot, twin ribbon tails. D pin Ø2.5mm ×2.5mm insertion into torso; radial clearance 0.20mm. Glue after dry-fit.')
+
+    coupons=doc.addObject('App::DocumentObjectGroup','FitTests');coupons.Label='02 • Fit coupons / 配合测试件'
+    coupon=box(0,0,0,26/SCALE,15/SCALE,8/SCALE)
+    for x,cl in [(5,.15),(13,.20),(21,.25)]:coupon=coupon.cut(d_pin((x/SCALE,7.5/SCALE,1.7/SCALE),3/SCALE,6.5/SCALE,clearance=cl/SCALE))
+    co=doc.addObject('PartDesign::Feature','FitCoupon');ss=coupon.copy();ss.scale(SCALE);co.Shape=ss;co.Label='T01 • Ø6 test, radial .15 / .20 / .25';coupons.addObject(co);co.Visibility=False
+    testpin=d_pin((36/SCALE,7.5/SCALE,0),3/SCALE,5/SCALE).fuse(box(30/SCALE,1/SCALE,5/SCALE,12/SCALE,13/SCALE,2/SCALE))
+    tp=doc.addObject('PartDesign::Feature','FitTestPin');ss=testpin.copy();ss.scale(SCALE);tp.Shape=ss;tp.Label='T02 • Ø6 test key';coupons.addObject(tp);tp.Visibility=False
+
+    if AUNT_CFG.get('print_refinement'):add_micro_fit_test(co,tp)
+
+    guides=doc.addObject('App::DocumentObjectGroup','Construction');guides.Label='03 • Photo-based construction / 照片比例参考 (hidden)'
+    for i,r in enumerate(body_rows):
+        c,rx,fr,ba=r;shape=cloth_wire(c,rx,fr,ba,2.2,'shirt');pm=App.Matrix();pm.A13=-POSE_SHEAR;pm.A14=POSE_SHEAR*7;shape=shape.transformGeometry(pm);shape.scale(SCALE)
+        ob=doc.addObject('PartDesign::Feature','TorsoSection%02d'%i);ob.Shape=shape;ob.Label='Torso section z=%.2fmm'%(c[2]*SCALE);guides.addObject(ob);ob.Visibility=False
+    doc.recompute()
+    report=[]
+    for obj in parts+[co,tp]:
+        if not obj.Shape.isValid() or len(obj.Shape.Solids)!=1:raise RuntimeError('Final check '+obj.Name)
+        mesh=MeshPart.meshFromShape(Shape=obj.Shape,LinearDeflection=.04,AngularDeflection=.12,Relative=False)
+        mesh.write(ROOT+'/stl/'+obj.Name+'.stl');obj.Shape.exportBrep(ROOT+'/source/'+obj.Name+'.brep')
+        bb=obj.Shape.BoundBox
+        report.append(dict(id=obj.Name,label=obj.Label,volume_mm3=round(obj.Shape.Volume,3),valid=obj.Shape.isValid(),solids=len(obj.Shape.Solids),triangles=mesh.CountFacets,bounds=[bb.XMin,bb.YMin,bb.ZMin,bb.XMax,bb.YMax,bb.ZMax],color=base_colors.get(obj.Name,[.7,.7,.7]),instructions=getattr(obj,'AssemblyInstructions','Fit test')))
+    with open(ROOT+'/source/parts_manifest.json','w') as f:json.dump(report,f,ensure_ascii=False,indent=2)
+    pole_vector=V(axis.x-POSE_SHEAR*axis.z,axis.y,axis.z).normalize()
+    with open(ROOT+'/source/design_parameters.json','w') as f:json.dump({'scale':SCALE,'height_mm':150,'radial_clearance_mm':.2,'axial_clearance_mm':.3,'standing_lean_from_board_normal_deg':STANDING_LEAN_DEG,'pose_shear':POSE_SHEAR,'pole_axis':[pole_vector.x,pole_vector.y,pole_vector.z],'head_yaw_deg':HEAD_YAW,'head_rows':head_rows,'body_rows':body_rows,'badge_center':badge_c},f,indent=2)
+    Part.export(parts,ROOT+'/Aunt_Figure_Assembly.step')
+    Gui.activateWorkbench('PartWorkbench');Gui.getMainWindow().showNormal();Gui.getMainWindow().setGeometry(0,0,1600,1200)
+    direction=V(.26,-.91,.31);rightv=V(.96,.275,0);up=direction.cross(rightv)
+    Gui.activeDocument().activeView().setCameraOrientation(App.Rotation(rightv,up,direction,'ZXY').Q)
+    Gui.activeDocument().activeView().fitAll();Gui.updateGui();doc.recompute();doc.saveAs(ROOT+'/Aunt_Figure_V4.FCStd')
+    Gui.activeDocument().activeView().saveImage(ROOT+'/previews/freecad_refined.png',1500,1300,'White')
+    log('BUILD_COMPLETE '+str(len(parts))+' assembly pieces')
+except Exception:log(traceback.format_exc())

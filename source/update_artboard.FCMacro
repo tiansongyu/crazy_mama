@@ -1,12 +1,12 @@
 import FreeCAD as App, FreeCADGui as Gui, Part, MeshPart
 import os,json,traceback
-ROOT='/home/ubuntu/github/structure/surfer_figurine_artboard_v3'
+ROOT='/home/ubuntu/github/structure/aunt_figurine_v4'
 prefix=open(ROOT+'/source/build_refined.FCMacro').read().split('\ntry:\n')[0]
 exec(compile(prefix,ROOT+'/source/build_refined.FCMacro','exec'),globals())
 open(LOG,'w').close()
 try:
-    if 'Photo_Figure_Artboard_V3' in App.listDocuments():App.closeDocument('Photo_Figure_Artboard_V3')
-    doc=App.openDocument(ROOT+'/Photo_Figure_Artboard_V3.FCStd');doc.Label='Photo_Figure_Artboard_V3'
+    if 'Aunt_Figure_V4' in App.listDocuments():App.closeDocument('Aunt_Figure_V4')
+    doc=App.openDocument(ROOT+'/Aunt_Figure_V4.FCStd');doc.Label='Aunt_Figure_V4'
     assembly=doc.getObject('Assembly');parts=list(assembly.Group)
     co=doc.getObject('FitCoupon');tp=doc.getObject('FitTestPin');guides=doc.getObject('Construction')
     base_colors={p['id']:p['color'] for p in json.load(open(ROOT+'/source/parts_manifest.json'))}
@@ -43,7 +43,7 @@ try:
         b=obj.Shape.BoundBox
         report.append(dict(id=obj.Name,label=obj.Label,volume_mm3=round(obj.Shape.Volume,3),valid=obj.Shape.isValid(),solids=len(obj.Shape.Solids),triangles=mesh.CountFacets,bounds=[b.XMin,b.YMin,b.ZMin,b.XMax,b.YMax,b.ZMax],color=base_colors[obj.Name],instructions=getattr(obj,'AssemblyInstructions','Fit test')))
     with open(ROOT+'/source/parts_manifest.json','w') as f:json.dump(report,f,ensure_ascii=False,indent=2)
-    Part.export(parts,ROOT+'/Photo_Figure_Artboard_Assembly.step')
+    Part.export(parts,ROOT+'/Aunt_Figure_Assembly.step')
     exec(compile(open(ROOT+'/source/audit_assembly.py').read(),ROOT+'/source/audit_assembly.py','exec'),globals())
     exec(compile(open(ROOT+'/source/finalize_in_freecad.py').read(),ROOT+'/source/finalize_in_freecad.py','exec'),globals())
     log('ARTBOARD_COMPLETE')

@@ -1,0 +1,236 @@
+[
+  {
+    "id": "P01_Board_Left",
+    "watertight": true,
+    "consistent_winding": true,
+    "positive_volume": true,
+    "connected_shells": 1,
+    "triangles": 52602,
+    "dimensions_mm": [
+      92.342,
+      46.667,
+      12.5
+    ]
+  },
+  {
+    "id": "P02_Board_Right",
+    "watertight": true,
+    "consistent_winding": true,
+    "positive_volume": true,
+    "connected_shells": 1,
+    "triangles": 51980,
+    "dimensions_mm": [
+      91.84,
+      46.667,
+      12.5
+    ]
+  },
+  {
+    "id": "P03_Dowel_1",
+    "watertight": true,
+    "consistent_winding": true,
+    "positive_volume": true,
+    "connected_shells": 1,
+    "triangles": 1280,
+    "dimensions_mm": [
+      13.15,
+      3.333,
+      3.333
+    ]
+  },
+  {
+    "id": "P03_Dowel_2",
+    "watertight": true,
+    "consistent_winding": true,
+    "positive_volume": true,
+    "connected_shells": 1,
+    "triangles": 1280,
+    "dimensions_mm": [
+      13.15,
+      3.333,
+      3.333
+    ]
+  },
+  {
+    "id": "P04_Leg",
+    "watertight": true,
+    "consistent_winding": true,
+    "positive_volume": true,
+    "connected_shells": 1,
+    "triangles": 32994,
+    "dimensions_mm": [
+      33.953,
+      16.842,
+      71.417
+    ]
+  },
+  {
+    "id": "P05_Leg",
+    "watertight": true,
+    "consistent_winding": true,
+    "positive_volume": true,
+    "connected_shells": 1,
+    "triangles": 32844,
+    "dimensions_mm": [
+      33.522,
+      18.324,
+      71.417
+    ]
+  },
+  {
+    "id": "P06_Torso",
+    "watertight": true,
+    "consistent_winding": true,
+    "positive_volume": true,
+    "connected_shells": 1,
+    "triangles": 28556,
+    "dimensions_mm": [
+      45.099,
+      23.436,
+      57.075
+    ]
+  },
+  {
+    "id": "P07_LeftArm",
+    "watertight": true,
+    "consistent_winding": true,
+    "positive_volume": true,
+    "connected_shells": 1,
+    "triangles": 39128,
+    "dimensions_mm": [
+      32.116,
+      16.4,
+      40.577
+    ]
+  },
+  {
+    "id": "P08_RightArm",
+    "watertight": true,
+    "consistent_winding": true,
+    "positive_volume": true,
+    "connected_shells": 1,
+    "triangles": 33584,
+    "dimensions_mm": [
+      18.621,
+      13.488,
+      57.078
+    ]
+  },
+  {
+    "id": "P09_Head",
+    "watertight": true,
+    "consistent_winding": true,
+    "positive_volume": true,
+    "connected_shells": 1,
+    "triangles": 99106,
+    "dimensions_mm": [
+      19.718,
+      16.173,
+      27.917
+    ]
+  },
+  {
+    "id": "P10_Collar",
+    "watertight": true,
+    "consistent_winding": true,
+    "positive_volume": true,
+    "connected_shells": 1,
+    "triangles": 1280,
+    "dimensions_mm": [
+      17.378,
+      12.831,
+      1.833
+    ]
+  },
+  {
+    "id": "P11_Hair",
+    "watertight": true,
+    "consistent_winding": true,
+    "positive_volume": true,
+    "connected_shells": 1,
+    "triangles": 39860,
+    "dimensions_mm": [
+      20.39,
+      16.584,
+      17.833
+    ]
+  },
+  {
+    "id": "P12_PaddleLower",
+    "watertight": true,
+    "consistent_winding": true,
+    "positive_volume": true,
+    "connected_shells": 1,
+    "triangles": 32070,
+    "dimensions_mm": [
+      21.861,
+      8.332,
+      53.84
+    ]
+  },
+  {
+    "id": "P13_PaddleUpper",
+    "watertight": true,
+    "consistent_winding": true,
+    "positive_volume": true,
+    "connected_shells": 1,
+    "triangles": 6192,
+    "dimensions_mm": [
+      11.725,
+      4.249,
+      35.191
+    ]
+  },
+  {
+    "id": "P14_Bow",
+    "watertight": true,
+    "consistent_winding": true,
+    "positive_volume": true,
+    "connected_shells": 1,
+    "triangles": 25102,
+    "dimensions_mm": [
+      10.515,
+      4.499,
+      5.333
+    ]
+  },
+  {
+    "id": "P15_Glasses",
+    "watertight": true,
+    "consistent_winding": true,
+    "positive_volume": true,
+    "connected_shells": 1,
+    "triangles": 41532,
+    "dimensions_mm": [
+      18.875,
+      11.192,
+      4.0
+    ]
+  },
+  {
+    "id": "FitCoupon",
+    "watertight": true,
+    "consistent_winding": true,
+    "positive_volume": true,
+    "connected_shells": 1,
+    "triangles": 1184,
+    "dimensions_mm": [
+      26.0,
+      15.0,
+      8.0
+    ]
+  },
+  {
+    "id": "FitTestPin",
+    "watertight": true,
+    "consistent_winding": true,
+    "positive_volume": true,
+    "connected_shells": 1,
+    "triangles": 800,
+    "dimensions_mm": [
+      12.0,
+      13.0,
+      7.0
+    ]
+  }
+]

@@ -1,27 +1,23 @@
-# crazy_mama · 艺术滑板人物 V3
+# 微笑阿姨 · 10 轮细化 V4
 
-15 厘米人物与艺术滑板的可拆分 3D 模型，支持旋转、缩放、正面 / 背面切换、部件隐藏和爆炸拆分。
+15 厘米人物：短侧分发型、椭圆眼镜、自然微笑、胸口蝴蝶结与艺术滑板。16 个装配分件，另附 2 个配合测试件。
 
-**在线预览：** [https://tiansongyu.github.io/crazy_mama/](https://tiansongyu.github.io/crazy_mama/)
+**在线 3D 预览：** [https://tiansongyu.github.io/crazy_mama/](https://tiansongyu.github.io/crazy_mama/)
 
-无需安装 FreeCAD，直接用支持 WebGL 的浏览器打开链接即可查看。也可下载仓库后，直接打开 `index.html` 或 `交互预览.html` 离线查看。
+直接用支持 WebGL 的浏览器打开即可查看，无需安装 FreeCAD。可拖动旋转、滚轮缩放、查看正面 / 背面、逐件隐藏和拆分。
 
-## 模型与说明
-
+- [10 轮迭代记录](10轮迭代记录.md)
+- [离线交互预览](交互预览.html)
+- [FreeCAD 装配模型](Aunt_Figure_V4.FCStd)
+- [FreeCAD 拆分模型](Aunt_Figure_Exploded.FCStd)
+- [STEP 模型](Aunt_Figure_Assembly.step)
 - [打印与装配说明](打印与装配说明.md)
 - [装配与连接图](装配与连接图.pdf)
-- [FreeCAD 装配模型](Photo_Figure_Artboard_V3.FCStd)
-- [FreeCAD 拆分模型](Photo_Figure_Artboard_Exploded.FCStd)
-- [STEP 装配模型](Photo_Figure_Artboard_Assembly.step)
-- [打印 STL 文件](print_stl/)
-- [预览效果图](previews/)
 
-## GitHub Pages 发布
+打印 STL 在 `print_stl/`，保留装配坐标的 STL 在 `stl/`。原版保留在独立目录中。本版尚未实物打印；面部根据单张模糊照片与指定造型补全。
 
-在仓库 **Settings → Pages** 中选择 **Deploy from a branch**，分支设为 **main**，目录设为 **/(root)**。保存后，GitHub 会发布上述在线预览地址；以后推送到 `main` 会自动更新网站。
+## GitHub Pages
 
-`index.html` 是网站首页，`.nojekyll` 让 GitHub 直接发布静态文件。模型数据内嵌于 HTML，预览不依赖外部 CDN。所有下载链接均使用相对路径，适配仓库的 Pages 地址。
+网站首页为 `index.html`，内容与 `交互预览.html` 一致，模型数据内嵌，不依赖外部 CDN。`.nojekyll` 用于直接发布静态文件。
 
-GitHub Free 需要公开仓库才能启用 Pages；私有仓库需要支持 Pages 的付费套餐。参见 [GitHub Pages 官方说明](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages)。在线链接需启用 Pages 并完成部署后才可访问。
-
-重新生成模型预览时，`source/package_previews.py` 会同时更新 `交互预览.html` 和 `index.html`。
+仓库的 Pages 发布源为 **main / /(root)**。推送到 `main` 后会自动更新上述在线地址。`source/package_previews.py` 会同时生成在线首页与离线预览。

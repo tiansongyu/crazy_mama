@@ -1,0 +1,8 @@
+{
+  "round": 4,
+  "title": "收敛鼻翼、面颊与唇部体积",
+  "fixed_parameterization": true,
+  "soft_jaw": true,
+  "compact_hair": true,
+  "restrained_features": true
+}

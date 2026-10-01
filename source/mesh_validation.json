@@ -5,7 +5,7 @@
     "consistent_winding": true,
     "positive_volume": true,
     "connected_shells": 1,
-    "triangles": 39416,
+    "triangles": 52602,
     "dimensions_mm": [
       92.342,
       46.667,
@@ -18,7 +18,7 @@
     "consistent_winding": true,
     "positive_volume": true,
     "connected_shells": 1,
-    "triangles": 38908,
+    "triangles": 51980,
     "dimensions_mm": [
       91.84,
       46.667,
@@ -31,7 +31,7 @@
     "consistent_winding": true,
     "positive_volume": true,
     "connected_shells": 1,
-    "triangles": 1096,
+    "triangles": 1280,
     "dimensions_mm": [
       13.15,
       3.333,
@@ -44,7 +44,7 @@
     "consistent_winding": true,
     "positive_volume": true,
     "connected_shells": 1,
-    "triangles": 1096,
+    "triangles": 1280,
     "dimensions_mm": [
       13.15,
       3.333,
@@ -57,10 +57,10 @@
     "consistent_winding": true,
     "positive_volume": true,
     "connected_shells": 1,
-    "triangles": 24796,
+    "triangles": 32994,
     "dimensions_mm": [
-      33.952,
-      16.84,
+      33.953,
+      16.842,
       71.417
     ]
   },
@@ -70,10 +70,10 @@
     "consistent_winding": true,
     "positive_volume": true,
     "connected_shells": 1,
-    "triangles": 24542,
+    "triangles": 32844,
     "dimensions_mm": [
-      33.521,
-      18.322,
+      33.522,
+      18.324,
       71.417
     ]
   },
@@ -83,10 +83,10 @@
     "consistent_winding": true,
     "positive_volume": true,
     "connected_shells": 1,
-    "triangles": 23582,
+    "triangles": 28556,
     "dimensions_mm": [
-      45.15,
-      23.49,
+      45.099,
+      23.436,
       57.075
     ]
   },
@@ -96,7 +96,7 @@
     "consistent_winding": true,
     "positive_volume": true,
     "connected_shells": 1,
-    "triangles": 30220,
+    "triangles": 39128,
     "dimensions_mm": [
       32.116,
       16.4,
@@ -109,10 +109,10 @@
     "consistent_winding": true,
     "positive_volume": true,
     "connected_shells": 1,
-    "triangles": 21894,
+    "triangles": 33584,
     "dimensions_mm": [
-      18.627,
-      13.487,
+      18.621,
+      13.488,
       57.078
     ]
   },
@@ -122,11 +122,11 @@
     "consistent_winding": true,
     "positive_volume": true,
     "connected_shells": 1,
-    "triangles": 57216,
+    "triangles": 112760,
     "dimensions_mm": [
-      20.559,
-      16.862,
-      29.417
+      19.718,
+      16.173,
+      27.917
     ]
   },
   {
@@ -135,10 +135,10 @@
     "consistent_winding": true,
     "positive_volume": true,
     "connected_shells": 1,
-    "triangles": 1176,
+    "triangles": 1280,
     "dimensions_mm": [
       17.378,
-      12.832,
+      12.831,
       1.833
     ]
   },
@@ -148,11 +148,11 @@
     "consistent_winding": true,
     "positive_volume": true,
     "connected_shells": 1,
-    "triangles": 6686,
+    "triangles": 39860,
     "dimensions_mm": [
-      20.31,
-      10.026,
-      11.0
+      20.39,
+      16.584,
+      17.833
     ]
   },
   {
@@ -161,10 +161,10 @@
     "consistent_winding": true,
     "positive_volume": true,
     "connected_shells": 1,
-    "triangles": 21690,
+    "triangles": 32070,
     "dimensions_mm": [
       21.861,
-      8.331,
+      8.332,
       53.84
     ]
   },
@@ -174,10 +174,10 @@
     "consistent_winding": true,
     "positive_volume": true,
     "connected_shells": 1,
-    "triangles": 4734,
+    "triangles": 6192,
     "dimensions_mm": [
-      11.724,
-      4.248,
+      11.725,
+      4.249,
       35.191
     ]
   },
@@ -187,11 +187,24 @@
     "consistent_winding": true,
     "positive_volume": true,
     "connected_shells": 1,
-    "triangles": 13814,
+    "triangles": 25102,
     "dimensions_mm": [
       10.515,
       4.499,
       5.333
+    ]
+  },
+  {
+    "id": "P15_Glasses",
+    "watertight": true,
+    "consistent_winding": true,
+    "positive_volume": true,
+    "connected_shells": 1,
+    "triangles": 40468,
+    "dimensions_mm": [
+      18.875,
+      11.192,
+      4.0
     ]
   },
   {
@@ -200,7 +213,7 @@
     "consistent_winding": true,
     "positive_volume": true,
     "connected_shells": 1,
-    "triangles": 992,
+    "triangles": 2696,
     "dimensions_mm": [
       26.0,
       15.0,
@@ -213,11 +226,11 @@
     "consistent_winding": true,
     "positive_volume": true,
     "connected_shells": 1,
-    "triangles": 680,
+    "triangles": 1808,
     "dimensions_mm": [
       12.0,
       13.0,
-      7.0
+      9.333
     ]
   }
 ]

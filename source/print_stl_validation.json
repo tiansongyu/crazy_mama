@@ -1,0 +1,146 @@
+[
+  {
+    "id": "FitCoupon",
+    "watertight": true,
+    "consistent_winding": true,
+    "positive_volume": true,
+    "connected_shells": 1,
+    "min_z_mm": 0.0
+  },
+  {
+    "id": "FitTestPin",
+    "watertight": true,
+    "consistent_winding": true,
+    "positive_volume": true,
+    "connected_shells": 1,
+    "min_z_mm": 0.0
+  },
+  {
+    "id": "P01_Board_Left",
+    "watertight": true,
+    "consistent_winding": true,
+    "positive_volume": true,
+    "connected_shells": 1,
+    "min_z_mm": 0.0
+  },
+  {
+    "id": "P02_Board_Right",
+    "watertight": true,
+    "consistent_winding": true,
+    "positive_volume": true,
+    "connected_shells": 1,
+    "min_z_mm": 0.0
+  },
+  {
+    "id": "P03_Dowel_1",
+    "watertight": true,
+    "consistent_winding": true,
+    "positive_volume": true,
+    "connected_shells": 1,
+    "min_z_mm": 0.0
+  },
+  {
+    "id": "P03_Dowel_2",
+    "watertight": true,
+    "consistent_winding": true,
+    "positive_volume": true,
+    "connected_shells": 1,
+    "min_z_mm": 0.0
+  },
+  {
+    "id": "P04_Leg",
+    "watertight": true,
+    "consistent_winding": true,
+    "positive_volume": true,
+    "connected_shells": 1,
+    "min_z_mm": 0.0
+  },
+  {
+    "id": "P05_Leg",
+    "watertight": true,
+    "consistent_winding": true,
+    "positive_volume": true,
+    "connected_shells": 1,
+    "min_z_mm": 0.0
+  },
+  {
+    "id": "P06_Torso",
+    "watertight": true,
+    "consistent_winding": true,
+    "positive_volume": true,
+    "connected_shells": 1,
+    "min_z_mm": 0.0
+  },
+  {
+    "id": "P07_LeftArm",
+    "watertight": true,
+    "consistent_winding": true,
+    "positive_volume": true,
+    "connected_shells": 1,
+    "min_z_mm": 0.0
+  },
+  {
+    "id": "P08_RightArm",
+    "watertight": true,
+    "consistent_winding": true,
+    "positive_volume": true,
+    "connected_shells": 1,
+    "min_z_mm": 0.0
+  },
+  {
+    "id": "P09_Head",
+    "watertight": true,
+    "consistent_winding": true,
+    "positive_volume": true,
+    "connected_shells": 1,
+    "min_z_mm": 0.0
+  },
+  {
+    "id": "P10_Collar",
+    "watertight": true,
+    "consistent_winding": true,
+    "positive_volume": true,
+    "connected_shells": 1,
+    "min_z_mm": 0.0
+  },
+  {
+    "id": "P11_Hair",
+    "watertight": true,
+    "consistent_winding": true,
+    "positive_volume": true,
+    "connected_shells": 1,
+    "min_z_mm": 0.0
+  },
+  {
+    "id": "P12_PaddleLower",
+    "watertight": true,
+    "consistent_winding": true,
+    "positive_volume": true,
+    "connected_shells": 1,
+    "min_z_mm": 0.0
+  },
+  {
+    "id": "P13_PaddleUpper",
+    "watertight": true,
+    "consistent_winding": true,
+    "positive_volume": true,
+    "connected_shells": 1,
+    "min_z_mm": 0.0
+  },
+  {
+    "id": "P14_Bow",
+    "watertight": true,
+    "consistent_winding": true,
+    "positive_volume": true,
+    "connected_shells": 1,
+    "min_z_mm": 0.0
+  },
+  {
+    "id": "P15_Glasses",
+    "watertight": true,
+    "consistent_winding": true,
+    "positive_volume": true,
+    "connected_shells": 1,
+    "min_z_mm": 0.0
+  }
+]

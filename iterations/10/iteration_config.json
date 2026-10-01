@@ -1,0 +1,14 @@
+{
+  "round": 10,
+  "title": "面部曲面收尾、眼镜定位销强化与导入倒角",
+  "fixed_parameterization": true,
+  "soft_jaw": true,
+  "compact_hair": true,
+  "restrained_features": true,
+  "warm_smile": true,
+  "slender_glasses": true,
+  "loose_blouse": true,
+  "hand_detail": true,
+  "bow_detail": true,
+  "print_refinement": true
+}

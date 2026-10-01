@@ -1,0 +1,20 @@
+{
+  "round": 2,
+  "title": "柔和下颌与自然颈部过渡",
+  "config": {
+    "round": 2,
+    "title": "柔和下颌与自然颈部过渡",
+    "fixed_parameterization": true,
+    "soft_jaw": true
+  },
+  "checked_at": "2026-09-30T23:41:38.692591",
+  "assembly_parts": 16,
+  "watertight_meshes": 18,
+  "interference_count": 0,
+  "head_stl_sha256": "2790919d55a67f8b500bcc5a20cc43080a6d108c493a1d6dc4b99c49831935ac",
+  "hair_stl_sha256": "0260b39f3bd3a9981433d7be5f6835e91db1f25ad2d94a16824ef34c713addcb",
+  "glasses_stl_sha256": "2378f7aa40dbbc4ed9e822762bb0347e1899cef5105d37410030227ee30f3603",
+  "torso_stl_sha256": "4cf6014a87b8d6a16b4d6af8784eb7fcefbc1268d0b3267dbbcf6db0987641f9",
+  "right_hand_stl_sha256": "bc594866789ee2eac87609ba20094447070b6ff917c75ff859f394c713949dce",
+  "bow_stl_sha256": "cd2d34fef832e8e8ee320e3cd2b4f81a278ee18fe9cf9ca3056b1a0056262fb9"
+}

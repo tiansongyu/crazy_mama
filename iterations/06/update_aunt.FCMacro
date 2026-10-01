@@ -1,0 +1,86 @@
+import FreeCAD as App,FreeCADGui as Gui,Part,MeshPart
+import os,json,traceback,textwrap
+ROOT='/home/ubuntu/github/structure/aunt_figurine_v4'
+source=open(ROOT+'/source/build_refined.FCMacro').read()
+exec(compile(source.split('\ntry:\n')[0],ROOT+'/source/build_refined.FCMacro','exec'),globals())
+open(LOG,'w').close()
+try:
+    if 'Aunt_Figure_V4' in App.listDocuments():App.closeDocument('Aunt_Figure_V4')
+    doc=App.openDocument(ROOT+'/Aunt_Figure_V4.FCStd');doc.Label='Aunt_Figure_V4'
+    assembly=doc.getObject('Assembly');parts=list(assembly.Group)
+    co=doc.getObject('FitCoupon');tp=doc.getObject('FitTestPin');guides=doc.getObject('Construction')
+    base_colors={p['id']:p['color'] for p in json.load(open(ROOT+'/source/parts_manifest.json'))}
+    def posed(s):
+        pm=App.Matrix();pm.A13=-POSE_SHEAR;pm.A14=POSE_SHEAR*7
+        s=s.transformGeometry(pm);s.scale(SCALE)
+        if not s.isValid():s.fix(.0001,.000001,.01)
+        if not s.isValid() or len(s.Solids)!=1:raise RuntimeError('Invalid posed shape')
+        return s
+    def replace(name,raw,color,label=None,notes=None):
+        obj=doc.getObject(name);obj.Shape=posed(raw);obj.ViewObject.ShapeColor=color;obj.ViewObject.DiffuseColor=[color]*len(obj.Shape.Faces)
+        base_colors[name]=list(color)
+        if label:obj.Label=label
+        if notes:obj.AssemblyInstructions=notes
+        return obj
+    signature=json.dumps({k:v for k,v in AUNT_CFG.items() if k not in ['round','title','loose_blouse','hand_detail','bow_detail']},sort_keys=True)
+    if globals().get('AUNT_SIGNATURE')!=signature:
+        AUNT_HEAD_RAW,AUNT_HAIR_RAW,AUNT_GLASSES_RAW=build_aunt_parts()
+        AUNT_SIGNATURE=signature
+    replace('P09_Head',AUNT_HEAD_RAW,SKIN,'09 • Smiling aunt / 柔和面颊、眼睑与自然微笑','Mature female facial proportions, gently raised cheeks, filled eyelids, integrated nose and subtle lip line. Two temple sockets for glasses.')
+    replace('P11_Hair',AUNT_HAIR_RAW,(.42,.40,.37) if AUNT_CFG.get('compact_hair') else (.30,.285,.27),'11 • Short side-part hair / 短侧分发型与发丝','Short swept hair shell with full crown, engraved side part and strands. Nominal seating clearance 0.20 mm; glue.')
+    if doc.getObject('P15_Glasses'):
+        replace('P15_Glasses',AUNT_GLASSES_RAW,(.25,.13,.14))
+    else:
+        put('P15_Glasses','15 • Oval spectacles / 独立椭圆眼镜',AUNT_GLASSES_RAW,(.25,.13,.14),'Open oval rims, bridge and temple arms form one piece. Two Ø1.25 mm locating pins, nominal 2.33 mm length, radial socket clearance 0.20 mm. Dry-fit and glue.')
+    log('Head, hair and spectacles replaced')
+    # Rebuild the blouse and bow together so their mating surfaces follow the new contour.
+    section=source[source.index('    body_rows='):source.index('    torso=put(')]
+    exec(compile(textwrap.dedent(section),ROOT+'/source/blouse_section','exec'),globals())
+    torso=replace('P06_Torso',body,PINK,'06 • Soft blouse silhouette / 柔和腰胸轮廓与衣褶')
+    torso.LoftProfiles=json.dumps(body_rows)
+    replace('P14_Bow',bow,(.93,.85,.68))
+    for name in ['P07_LeftArm','P08_RightArm']:
+        ob=doc.getObject(name);ss=Part.Shape();ss.read(ROOT+'/source/baseline/'+name+'.brep')
+        if ss.common(torso.Shape).Volume>.005:ss=ss.cut(torso.Shape)
+        if name=='P08_RightArm' and AUNT_CFG.get('hand_detail'):
+            for tool in hand_detail_tools('right'):
+                ss=ss.cut(posed(tool))
+        if not ss.isValid() or len(ss.Solids)!=1:raise RuntimeError('Sleeve/hand check '+name)
+        ob.Shape=ss
+    for i,r in enumerate(body_rows):
+        c,rx,fr,ba=r;shape=cloth_wire(c,rx,fr,ba,2.2,'shirt');pm=App.Matrix();pm.A13=-POSE_SHEAR;pm.A14=POSE_SHEAR*7
+        shape=shape.transformGeometry(pm);shape.scale(SCALE);doc.getObject('TorsoSection%02d'%i).Shape=shape
+    for name in ['P04_Leg','P05_Leg','P07_LeftArm','P08_RightArm']:
+        ob=doc.getObject(name);palette=[]
+        for f in ob.Shape.Faces:
+            c=f.CenterOfMass/SCALE;c.x+=POSE_SHEAR*(c.z-7)
+            if name in ['P04_Leg','P05_Leg']:color=BLACK if c.z<14.85 else SKIN if c.z<18.7 else NAVY
+            elif name=='P07_LeftArm':color=SKIN if c.x<-25.3 and c.z<102.5 else PINK
+            else:color=SKIN if c.z<84.4 else PINK
+            palette.append(color)
+        ob.ViewObject.DiffuseColor=palette
+    for obj in parts:obj.VersionNotes='V4: mature female portrait, short side-parted hair, smiling eyes, oval glasses and softer blouse silhouette; 150 mm nominal height'
+    if AUNT_CFG.get('print_refinement'):add_micro_fit_test(co,tp)
+    spectacles=doc.getObject('P15_Glasses')
+    frame_color=(.24,.19,.16) if AUNT_CFG.get('slender_glasses') else (.25,.13,.14)
+    spectacles.ViewObject.ShapeColor=frame_color;spectacles.ViewObject.DiffuseColor=[frame_color]*len(spectacles.Shape.Faces);base_colors['P15_Glasses']=list(frame_color)
+    peg_diameter=(1.7 if AUNT_CFG.get('print_refinement') else 1.5)*SCALE
+    spectacles.AssemblyInstructions='Open oval spectacles; two locating pins diameter %.3f mm, length 2.33 mm; radial hole clearance 0.20 mm. Dry fit and glue.'%peg_diameter
+    params=doc.getObject('Dimensions')
+    for i,(a,b) in enumerate([('Assembly pieces','16'),('Glasses rim width','0.70' if AUNT_CFG.get('slender_glasses') else '0.83'),('Glasses peg diameter','1.42' if AUNT_CFG.get('print_refinement') else '1.25'),('Glasses peg length','2.33')],20):params.set('A'+str(i),a);params.set('B'+str(i),b)
+    design=json.load(open(ROOT+'/source/design_parameters.json'));design['head_rows']=FEMALE_ROWS;design['body_rows']=body_rows;design['badge_center']=badge_c;design['edition']='Aunt V4';design['assembly_parts']=16
+    with open(ROOT+'/source/design_parameters.json','w') as f:json.dump(design,f,ensure_ascii=False,indent=2)
+    doc.recompute();report=[]
+    for obj in parts+[co,tp]:
+        if not obj.Shape.isValid() or len(obj.Shape.Solids)!=1:raise RuntimeError('Final solid check '+obj.Name)
+        mesh=MeshPart.meshFromShape(Shape=obj.Shape,LinearDeflection=.035,AngularDeflection=.10,Relative=False)
+        mesh.write(ROOT+'/stl/'+obj.Name+'.stl');obj.Shape.exportBrep(ROOT+'/source/'+obj.Name+'.brep')
+        b=obj.Shape.BoundBox
+        report.append(dict(id=obj.Name,label=obj.Label,volume_mm3=round(obj.Shape.Volume,3),valid=obj.Shape.isValid(),solids=len(obj.Shape.Solids),triangles=mesh.CountFacets,bounds=[b.XMin,b.YMin,b.ZMin,b.XMax,b.YMax,b.ZMax],color=base_colors.get(obj.Name,[.7,.7,.7]),instructions=getattr(obj,'AssemblyInstructions','Fit test')))
+    with open(ROOT+'/source/parts_manifest.json','w') as f:json.dump(report,f,ensure_ascii=False,indent=2)
+    Part.export(parts,ROOT+'/Aunt_Figure_Assembly.step')
+    exec(compile(open(ROOT+'/source/audit_assembly.py').read(),ROOT+'/source/audit_assembly.py','exec'),globals())
+    exec(compile(open(ROOT+'/source/finalize_in_freecad.py').read(),ROOT+'/source/finalize_in_freecad.py','exec'),globals())
+    with open(ROOT+'/source/current_iteration_complete.json','w') as f:json.dump({'round':AUNT_CFG.get('round',0),'config':AUNT_CFG,'parts':len(parts),'interference_count':len(intersections)},f,ensure_ascii=False,indent=2)
+    log('AUNT_V4_COMPLETE ROUND '+str(AUNT_CFG.get('round',0)))
+except Exception:log(traceback.format_exc())

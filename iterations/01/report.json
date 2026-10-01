@@ -1,0 +1,19 @@
+{
+  "round": 1,
+  "title": "面部曲面连续性与细节采样",
+  "config": {
+    "round": 1,
+    "title": "面部曲面连续性与细节采样",
+    "fixed_parameterization": true
+  },
+  "checked_at": "2026-09-30T23:38:15.600795",
+  "assembly_parts": 16,
+  "watertight_meshes": 18,
+  "interference_count": 0,
+  "head_stl_sha256": "25cb0c102708ed90707cf832ed8bbb800239376a06f9c6777e9cdef1b9719ecf",
+  "hair_stl_sha256": "10db0e9b03f393d69225c0b0178595f431fad8d22873c028ccf47db554f62480",
+  "glasses_stl_sha256": "2378f7aa40dbbc4ed9e822762bb0347e1899cef5105d37410030227ee30f3603",
+  "torso_stl_sha256": "4cf6014a87b8d6a16b4d6af8784eb7fcefbc1268d0b3267dbbcf6db0987641f9",
+  "right_hand_stl_sha256": "0c1bd8aea8fc3f73c6205e7ad5eb0f886b9e4d8a7f03c9218cc15a7c59d508be",
+  "bow_stl_sha256": "cd2d34fef832e8e8ee320e3cd2b4f81a278ee18fe9cf9ca3056b1a0056262fb9"
+}

@@ -1,0 +1,25 @@
+{
+  "round": 7,
+  "title": "恢复原图宽松上衣的腰胸比例",
+  "config": {
+    "round": 7,
+    "title": "恢复原图宽松上衣的腰胸比例",
+    "fixed_parameterization": true,
+    "soft_jaw": true,
+    "compact_hair": true,
+    "restrained_features": true,
+    "warm_smile": true,
+    "slender_glasses": true,
+    "loose_blouse": true
+  },
+  "checked_at": "2026-09-30T23:51:54.073520",
+  "assembly_parts": 16,
+  "watertight_meshes": 18,
+  "interference_count": 0,
+  "head_stl_sha256": "70efe51cf7cfb04dbbca880cd4bf6db9e07799ff6bc69ee9adf79afbdc9bd90f",
+  "hair_stl_sha256": "56d63121bd0ea88d7842966cd43e771716cd518298c6d85cafbd272b9d3bb379",
+  "glasses_stl_sha256": "f2876054a752a7af0d4ad432555e14a947c5a3c6f4bfa9b74f7e04615fff0880",
+  "torso_stl_sha256": "46801996c343469052a57c6969e22e8da61ab3a5c9221ff9c40f3f69bd216d6b",
+  "right_hand_stl_sha256": "bc594866789ee2eac87609ba20094447070b6ff917c75ff859f394c713949dce",
+  "bow_stl_sha256": "40b9aecab7f61caac023b5fcae9cb8ff83f3a1920b059380d5c1ef341262c0d7"
+}

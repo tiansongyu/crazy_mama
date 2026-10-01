@@ -1,0 +1,12 @@
+{
+  "round": 8,
+  "title": "自然手指关节与掌部细节",
+  "fixed_parameterization": true,
+  "soft_jaw": true,
+  "compact_hair": true,
+  "restrained_features": true,
+  "warm_smile": true,
+  "slender_glasses": true,
+  "loose_blouse": true,
+  "hand_detail": true
+}

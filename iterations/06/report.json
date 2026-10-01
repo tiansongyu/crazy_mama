@@ -1,0 +1,24 @@
+{
+  "round": 6,
+  "title": "减轻镜框厚重感与鼻梁连接",
+  "config": {
+    "round": 6,
+    "title": "减轻镜框厚重感与鼻梁连接",
+    "fixed_parameterization": true,
+    "soft_jaw": true,
+    "compact_hair": true,
+    "restrained_features": true,
+    "warm_smile": true,
+    "slender_glasses": true
+  },
+  "checked_at": "2026-09-30T23:51:06.077680",
+  "assembly_parts": 16,
+  "watertight_meshes": 18,
+  "interference_count": 0,
+  "head_stl_sha256": "70efe51cf7cfb04dbbca880cd4bf6db9e07799ff6bc69ee9adf79afbdc9bd90f",
+  "hair_stl_sha256": "56d63121bd0ea88d7842966cd43e771716cd518298c6d85cafbd272b9d3bb379",
+  "glasses_stl_sha256": "f2876054a752a7af0d4ad432555e14a947c5a3c6f4bfa9b74f7e04615fff0880",
+  "torso_stl_sha256": "4cf6014a87b8d6a16b4d6af8784eb7fcefbc1268d0b3267dbbcf6db0987641f9",
+  "right_hand_stl_sha256": "bc594866789ee2eac87609ba20094447070b6ff917c75ff859f394c713949dce",
+  "bow_stl_sha256": "cd2d34fef832e8e8ee320e3cd2b4f81a278ee18fe9cf9ca3056b1a0056262fb9"
+}

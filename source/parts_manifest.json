@@ -5,14 +5,14 @@
     "volume_mm3": 24360.969,
     "valid": true,
     "solids": 1,
-    "triangles": 39416,
+    "triangles": 52602,
     "bounds": [
-      -91.66666140904132,
+      -91.66651998342665,
       -23.333333333333357,
       0.0,
-      0.6754316287930114,
+      0.675431628793011,
       23.333333333333357,
-      12.499997195763111
+      12.499921764435435
     ],
     "color": [
       0.73,
@@ -27,9 +27,9 @@
     "volume_mm3": 24231.264,
     "valid": true,
     "solids": 1,
-    "triangles": 38908,
+    "triangles": 51980,
     "bounds": [
-      -0.17368241883249258,
+      -0.173682418832493,
       -23.333333333333357,
       0.0,
       91.66666666666667,
@@ -49,13 +49,13 @@
     "volume_mm3": 112.211,
     "valid": true,
     "solids": 1,
-    "triangles": 1096,
+    "triangles": 1280,
     "bounds": [
       -6.237194833873096,
-      -11.666666553771167,
-      1.250000386185003,
-      6.912617928335018,
-      -8.333335569273341,
+      -11.666613128500922,
+      1.2500000389618608,
+      6.9125917667360115,
+      -8.333392409624793,
       4.583333333333334
     ],
     "color": [
@@ -71,13 +71,13 @@
     "volume_mm3": 112.211,
     "valid": true,
     "solids": 1,
-    "triangles": 1096,
+    "triangles": 1280,
     "bounds": [
       -6.237194833873096,
-      8.333333446228833,
-      1.250000386185003,
-      6.912617928335018,
-      11.66666443072666,
+      8.333386871499078,
+      1.2500000389618608,
+      6.9125917667360115,
+      11.666607590375206,
       4.583333333333334
     ],
     "color": [
@@ -93,13 +93,13 @@
     "volume_mm3": 8644.342,
     "valid": true,
     "solids": 1,
-    "triangles": 24796,
+    "triangles": 32994,
     "bounds": [
-      -29.938935702806063,
-      -9.03921557584225,
+      -29.93936183103771,
+      -9.041358613606501,
       1.9166666666666663,
       4.013232548646303,
-      7.800510389691419,
+      7.800149480335648,
       73.33333333333336
     ],
     "color": [
@@ -115,13 +115,13 @@
     "volume_mm3": 8452.147,
     "valid": true,
     "solids": 1,
-    "triangles": 24542,
+    "triangles": 32844,
     "bounds": [
-      -11.174455587740898,
-      -10.725734326586272,
+      -11.175019549635746,
+      -10.72727089573144,
       1.9166666666666663,
       22.34656588197964,
-      7.596357946828086,
+      7.5964660836855975,
       73.33333333333336
     ],
     "color": [
@@ -133,17 +133,17 @@
   },
   {
     "id": "P06_Torso",
-    "label": "06 • Sweater / 宽松上衣与布料褶皱",
-    "volume_mm3": 37640.527,
+    "label": "06 • Soft blouse silhouette / 柔和腰胸轮廓与衣褶",
+    "volume_mm3": 37620.488,
     "valid": true,
     "solids": 1,
-    "triangles": 23582,
+    "triangles": 28556,
     "bounds": [
-      -14.402978518240936,
-      -12.751250514974753,
-      68.33333333333331,
+      -14.351722036124139,
+      -12.69143654906757,
+      68.3333333333333,
       30.74748965900161,
-      10.73898265885164,
+      10.74497136012672,
       125.40833333333337
     ],
     "color": [
@@ -156,17 +156,17 @@
   {
     "id": "P07_LeftArm",
     "label": "07 • Left arm / 左袖、拇指与握杆手",
-    "volume_mm3": 3907.682,
+    "volume_mm3": 3906.758,
     "valid": true,
     "solids": 1,
-    "triangles": 30220,
+    "triangles": 39128,
     "bounds": [
       -37.71177983104803,
       -9.588186324008227,
-      78.75054137648695,
-      -5.595312102907041,
-      6.811810671365916,
-      119.32753500748677
+      78.750541376487,
+      -5.595312102907039,
+      6.811816254707532,
+      119.327535007487
     ],
     "color": [
       0.79,
@@ -178,17 +178,17 @@
   {
     "id": "P08_RightArm",
     "label": "08 • Right arm / 下垂衣袖与自然手指",
-    "volume_mm3": 4020.635,
+    "volume_mm3": 4007.809,
     "valid": true,
     "solids": 1,
-    "triangles": 21894,
+    "triangles": 33584,
     "bounds": [
-      24.867498736916982,
-      -6.668461171092972,
-      62.25000000000001,
-      43.494624001956325,
-      6.818848704126928,
-      119.32816388504031
+      24.867498736917,
+      -6.668777904507957,
+      62.25,
+      43.48808983182182,
+      6.8193125341990966,
+      119.32814180484867
     ],
     "color": [
       0.79,
@@ -199,25 +199,25 @@
   },
   {
     "id": "P09_Head",
-    "label": "09 • Smiling sculpted head / 微笑与老年面部细节",
-    "volume_mm3": 3626.462,
+    "label": "09 • Smiling aunt / 柔和面颊、眼睑与自然微笑",
+    "volume_mm3": 3383.654,
     "valid": true,
     "solids": 1,
-    "triangles": 57216,
+    "triangles": 112760,
     "bounds": [
-      0.6264468537554035,
-      -9.251037604715862,
-      120.41666666666669,
-      21.185147370629124,
-      7.6114413216764945,
-      149.83333333333343
+      1.0191410440703967,
+      -8.515002180596966,
+      120.41666666666666,
+      20.737191378797235,
+      7.658029169814062,
+      148.33333333333337
     ],
     "color": [
-      0.76,
-      0.51,
-      0.4
+      0.79,
+      0.57,
+      0.46
     ],
-    "instructions": "Raised smile corners, cheek folds, eye sockets, nose bridge and alae, forehead lines, open ear recesses. Turned 8° toward photo left."
+    "instructions": "Mature female facial proportions, gently raised cheeks, filled eyelids, integrated nose and subtle lip line. Two temple sockets for glasses."
   },
   {
     "id": "P10_Collar",
@@ -225,14 +225,14 @@
     "volume_mm3": 181.184,
     "valid": true,
     "solids": 1,
-    "triangles": 1176,
+    "triangles": 1280,
     "bounds": [
-      1.5258689147535465,
-      -6.415792145996299,
+      1.5252097459930558,
+      -6.414888427213178,
       125.41666666666664,
       18.903651609743257,
-      6.4160936203280485,
-      127.25000000000003
+      6.416249213545976,
+      127.25000000000001
     ],
     "color": [
       0.92,
@@ -243,25 +243,25 @@
   },
   {
     "id": "P11_Hair",
-    "label": "11 • Receding gray hair / 两侧与后脑灰发",
-    "volume_mm3": 286.075,
+    "label": "11 • Short side-part hair / 短侧分发型与发丝",
+    "volume_mm3": 871.972,
     "valid": true,
     "solids": 1,
-    "triangles": 6686,
+    "triangles": 39860,
     "bounds": [
-      0.445511364346108,
-      -0.9972159269156942,
-      138.1666666666667,
-      20.755881084854103,
-      9.028950575628087,
-      149.16630890594104
+      0.27479674270001736,
+      -7.467480231016373,
+      131.66666666666669,
+      20.664759814846505,
+      9.116790886148966,
+      149.50000000000006
     ],
     "color": [
+      0.42,
       0.4,
-      0.405,
-      0.4
+      0.37
     ],
-    "instructions": "Horseshoe rear hair band, bald crown preserved. Approx 1.2mm wall and 0.20mm seating clearance. Glue."
+    "instructions": "Short swept hair shell with full crown, engraved side part and strands. Nominal seating clearance 0.20 mm; glue."
   },
   {
     "id": "P12_PaddleLower",
@@ -269,14 +269,14 @@
     "volume_mm3": 809.414,
     "valid": true,
     "solids": 1,
-    "triangles": 21690,
+    "triangles": 32070,
     "bounds": [
-      -56.86505786337422,
-      -10.415682062988738,
+      -56.865049568160984,
+      -10.416031092924461,
       5.841666666666667,
-      -35.004113649376805,
-      -2.084271097044116,
-      59.68155457918273
+      -35.0039202453063,
+      -2.083848806985129,
+      59.68160169248307
     ],
     "color": [
       0.4,
@@ -291,13 +291,13 @@
     "volume_mm3": 328.728,
     "valid": true,
     "solids": 1,
-    "triangles": 4734,
+    "triangles": 6192,
     "bounds": [
       -42.87039456927597,
-      -8.374205976790646,
-      54.05970076558755,
-      -31.146096757756926,
-      -4.126081238135556,
+      -8.374446316921029,
+      54.05965414175368,
+      -31.145611033995543,
+      -4.125751250488703,
       89.25057135369987
     ],
     "color": [
@@ -310,16 +310,16 @@
   {
     "id": "P14_Bow",
     "label": "14 • Chest bow / 独立立体蝴蝶结",
-    "volume_mm3": 59.483,
+    "volume_mm3": 59.18,
     "valid": true,
     "solids": 1,
-    "triangles": 13814,
+    "triangles": 25102,
     "bounds": [
-      3.6230893097393535,
-      -13.049075101612173,
+      3.6231310926531717,
+      -13.21574176827884,
       104.0,
-      14.13769282445852,
-      -8.55,
+      14.137706656229005,
+      -8.716666666666667,
       109.33333333333336
     ],
     "color": [
@@ -330,12 +330,34 @@
     "instructions": "Two loops, central knot, twin ribbon tails. D pin Ø2.5mm ×2.5mm insertion into torso; radial clearance 0.20mm. Glue after dry-fit."
   },
   {
-    "id": "FitCoupon",
-    "label": "T01 • Ø6 test, radial .15 / .20 / .25",
-    "volume_mm3": 2558.989,
+    "id": "P15_Glasses",
+    "label": "15 • Oval spectacles / 独立椭圆眼镜",
+    "volume_mm3": 38.822,
     "valid": true,
     "solids": 1,
-    "triangles": 992,
+    "triangles": 40468,
+    "bounds": [
+      1.151008232099375,
+      -9.485491785301718,
+      135.25002313348347,
+      20.026127313004054,
+      1.706352634339817,
+      139.24999417344318
+    ],
+    "color": [
+      0.24,
+      0.19,
+      0.16
+    ],
+    "instructions": "Open oval spectacles; two locating pins diameter 1.417 mm, length 2.33 mm; radial hole clearance 0.20 mm. Dry fit and glue."
+  },
+  {
+    "id": "FitCoupon",
+    "label": "T01 • Main joints + spectacle micro-fit / 大小接头测试块",
+    "volume_mm3": 2534.055,
+    "valid": true,
+    "solids": 1,
+    "triangles": 2696,
     "bounds": [
       0.0,
       0.0,
@@ -349,28 +371,28 @@
       0.7,
       0.7
     ],
-    "instructions": "Fit test"
+    "instructions": "Rear row: Ø6 D-key holes. Front row y=2: Ø1.42 glasses-pin holes. Both rows use radial clearances .15/.20/.25 mm from left to right."
   },
   {
     "id": "FitTestPin",
-    "label": "T02 • Ø6 test key",
-    "volume_mm3": 440.622,
+    "label": "T02 • Ø6 D key + Ø1.42 glasses pin / 双向试配针",
+    "volume_mm3": 444.254,
     "valid": true,
     "solids": 1,
-    "triangles": 680,
+    "triangles": 1808,
     "bounds": [
       30.0,
       1.0,
       0.0,
       42.0,
       14.000000000000002,
-      7.000000000000001
+      9.333333333333334
     ],
     "color": [
       0.7,
       0.7,
       0.7
     ],
-    "instructions": "Fit test"
+    "instructions": "Ø6 D key below handle; Ø1.42 spectacle test pin above handle with 0.15 mm tip chamfer."
   }
 ]

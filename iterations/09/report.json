@@ -1,0 +1,27 @@
+{
+  "round": 9,
+  "title": "蝴蝶结丝带褶线与装饰层次",
+  "config": {
+    "round": 9,
+    "title": "蝴蝶结丝带褶线与装饰层次",
+    "fixed_parameterization": true,
+    "soft_jaw": true,
+    "compact_hair": true,
+    "restrained_features": true,
+    "warm_smile": true,
+    "slender_glasses": true,
+    "loose_blouse": true,
+    "hand_detail": true,
+    "bow_detail": true
+  },
+  "checked_at": "2026-09-30T23:53:35.317780",
+  "assembly_parts": 16,
+  "watertight_meshes": 18,
+  "interference_count": 0,
+  "head_stl_sha256": "70efe51cf7cfb04dbbca880cd4bf6db9e07799ff6bc69ee9adf79afbdc9bd90f",
+  "hair_stl_sha256": "56d63121bd0ea88d7842966cd43e771716cd518298c6d85cafbd272b9d3bb379",
+  "glasses_stl_sha256": "f2876054a752a7af0d4ad432555e14a947c5a3c6f4bfa9b74f7e04615fff0880",
+  "torso_stl_sha256": "46801996c343469052a57c6969e22e8da61ab3a5c9221ff9c40f3f69bd216d6b",
+  "right_hand_stl_sha256": "8e73e0dbbec7b3c1187940bac687cb01ccd6da7bd2c0405dd8f12f386a6f03dc",
+  "bow_stl_sha256": "e6ae43c189b7771d96e3209caa0a93c1a6eb4858fc83ef6be1363b37c7ad45ab"
+}

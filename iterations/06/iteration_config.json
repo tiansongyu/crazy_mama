@@ -1,0 +1,10 @@
+{
+  "round": 6,
+  "title": "减轻镜框厚重感与鼻梁连接",
+  "fixed_parameterization": true,
+  "soft_jaw": true,
+  "compact_hair": true,
+  "restrained_features": true,
+  "warm_smile": true,
+  "slender_glasses": true
+}

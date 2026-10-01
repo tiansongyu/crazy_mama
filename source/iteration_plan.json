@@ -1,0 +1,52 @@
+[
+  {
+    "round": 1,
+    "title": "面部曲面连续性与细节采样",
+    "key": "fixed_parameterization"
+  },
+  {
+    "round": 2,
+    "title": "柔和下颌与自然颈部过渡",
+    "key": "soft_jaw"
+  },
+  {
+    "round": 3,
+    "title": "参考照片的贴头短发与灰棕发色",
+    "key": "compact_hair"
+  },
+  {
+    "round": 4,
+    "title": "收敛鼻翼、面颊与唇部体积",
+    "key": "restrained_features"
+  },
+  {
+    "round": 5,
+    "title": "克制而亲切的笑容与眼神",
+    "key": "warm_smile"
+  },
+  {
+    "round": 6,
+    "title": "减轻镜框厚重感与鼻梁连接",
+    "key": "slender_glasses"
+  },
+  {
+    "round": 7,
+    "title": "恢复原图宽松上衣的腰胸比例",
+    "key": "loose_blouse"
+  },
+  {
+    "round": 8,
+    "title": "自然手指关节与掌部细节",
+    "key": "hand_detail"
+  },
+  {
+    "round": 9,
+    "title": "蝴蝶结丝带褶线与装饰层次",
+    "key": "bow_detail"
+  },
+  {
+    "round": 10,
+    "title": "面部曲面收尾、眼镜定位销强化与导入倒角",
+    "key": "print_refinement"
+  }
+]

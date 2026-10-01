@@ -1,0 +1,11 @@
+{
+  "round": 7,
+  "title": "恢复原图宽松上衣的腰胸比例",
+  "fixed_parameterization": true,
+  "soft_jaw": true,
+  "compact_hair": true,
+  "restrained_features": true,
+  "warm_smile": true,
+  "slender_glasses": true,
+  "loose_blouse": true
+}

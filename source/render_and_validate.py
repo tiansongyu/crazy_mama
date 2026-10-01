@@ -8,13 +8,14 @@ manifest=json.loads((ROOT/'source/parts_manifest.json').read_text())
 design=json.loads((ROOT/'source/design_parameters.json').read_text())
 SCALE=design['scale']
 ART=json.loads((ROOT/'source/artboard_parameters.json').read_text())
+ITERATION=json.loads((ROOT/'source/iteration_config.json').read_text()) if (ROOT/'source/iteration_config.json').exists() else {}
 parts=[p for p in manifest if p['id'].startswith('P')]
 OFFSETS={'P01_Board_Left':[-15,0,0],'P02_Board_Right':[15,0,0],
  'P03_Dowel_1':[0,-40,5],'P03_Dowel_2':[0,-40,5],
  'P04_Leg':[-12,0,12],'P05_Leg':[12,0,12],'P06_Torso':[0,0,27],
  'P07_LeftArm':[-34,0,30],'P08_RightArm':[34,0,30],
  'P09_Head':[0,0,65],'P10_Collar':[0,0,47],'P11_Hair':[38,0,70],
- 'P12_PaddleLower':[-32,0,8],'P13_PaddleUpper':[-32,0,33],'P14_Bow':[0,-38,28]}
+ 'P12_PaddleLower':[-32,0,8],'P13_PaddleUpper':[-32,0,33],'P14_Bow':[0,-38,28],'P15_Glasses':[0,-45,65]}
 
 def color_triangles(mesh,p):
     centers=mesh.triangles_center/SCALE
@@ -23,19 +24,26 @@ def color_triangles(mesh,p):
     n=p['id']
     if n in ['P04_Leg','P05_Leg']:
         colors[:]=[29,37,52]
-        colors[centers[:,2]<18.7]=[194,130,102]
+        colors[centers[:,2]<18.7]=[201,145,117]
         colors[centers[:,2]<14.85]=[17,18,20]
-    if n=='P07_LeftArm': colors[(centers[:,0]<-25.3)&(centers[:,2]<102.5)]=[194,130,102]
-    if n=='P08_RightArm': colors[centers[:,2]<84.4]=[194,130,102]
+    if n=='P07_LeftArm': colors[(centers[:,0]<-25.3)&(centers[:,2]<102.5)]=[201,145,117]
+    if n=='P08_RightArm': colors[centers[:,2]<84.4]=[201,145,117]
     if n=='P09_Head':
         angle=-math.radians(design['head_yaw_deg']);cy=math.cos(angle);sy=math.sin(angle)
         local=centers.copy();local[:,0]=29+(centers[:,0]-29)*cy-centers[:,1]*sy;local[:,1]=(centers[:,0]-29)*sy+centers[:,1]*cy
-        for x in [26.6,34.8]:
-            mask=(abs(local[:,0]-x)<1.1)&(abs(local[:,2]-164.2)<.39)&(local[:,1]<-6.4)
-            colors[mask]=[65,54,48]
-        smile_z=156+1.4*((local[:,0]-30.5)/3.4)**2
-        mask=(abs(local[:,0]-30.5)<3.5)&(abs(local[:,2]-smile_z)<.43)&(local[:,1]<-7.0)
-        colors[mask]=[124,68,63]
+        for x in [26.9,35.1]:
+            dx=local[:,0]-x;dz=local[:,2]-164.35
+            eye=(dx/1.25)**2+(dz/.28)**2<1
+            eye &= local[:,1]<-6.2
+            colors[eye]=[221,210,193]
+            iris=eye & (abs(dx)<.37)
+            colors[iris]=[68,53,43]
+            browz=166.2+.3*(1-(dx/1.65)**2)
+            brow=(abs(dx)<1.65)&(abs(local[:,2]-browz)<.19)&(local[:,1]<-6)
+            colors[brow]=[83,65,55]
+        smile_z=156.95+(.70 if ITERATION.get('warm_smile') else .55)*((local[:,0]-31)/3.45)**2
+        lips=(abs(local[:,0]-31)<3.5)&(abs(local[:,2]-smile_z)<.31)&(local[:,1]<-6.6)
+        colors[lips]=[160,95,90]
     if n in ['P01_Board_Left','P02_Board_Right']:
         x,y,z=centers.T
         height=7+8*(np.maximum(abs(x)-80,0)/30)**2+1.8*(np.maximum(abs(y)-15,0)/13)**2
@@ -67,9 +75,10 @@ def poly_from_mesh(mesh,colors):
     scalars=numpy_to_vtk(colors,deep=True,array_type=vtk.VTK_UNSIGNED_CHAR); scalars.SetName('Color'); pd.GetCellData().SetScalars(scalars)
     return pd
 
-def render(path,exploded=False,front=False,rear=False,detail=False):
+def render(path,exploded=False,front=False,rear=False,detail=False,target_override=None,zoom_override=None,only_parts=None,caption=None):
     ren=vtk.vtkRenderer(); ren.SetBackground(.955,.962,.973)
     for p in parts:
+        if only_parts is not None and p['id'] not in only_parts:continue
         pd=poly_from_mesh(meshes[p['id']],color_triangles(meshes[p['id']],p))
         normals=vtk.vtkPolyDataNormals(); normals.SetInputData(pd); normals.SetFeatureAngle(65); normals.SplittingOn(); normals.ConsistencyOn()
         mapper=vtk.vtkPolyDataMapper(); mapper.SetInputConnection(normals.GetOutputPort()); mapper.SetScalarModeToUseCellData(); mapper.SetColorModeToDirectScalars()
@@ -80,17 +89,18 @@ def render(path,exploded=False,front=False,rear=False,detail=False):
         if exploded: actor.SetPosition(OFFSETS[p['id']])
         ren.AddActor(actor)
     cam=ren.GetActiveCamera(); target=[10,-1,125] if detail else [0,0,100 if exploded else 74]
+    if target_override is not None:target=target_override
     cam.SetFocalPoint(target)
     cam.SetPosition((target[0]+25,-600,target[2]+16) if detail else (0,-700,target[2]+8) if front else (-245,650,target[2]+270) if rear else (245,-650,target[2]+270))
-    cam.SetViewUp(0,0,1); cam.ParallelProjectionOn(); cam.SetParallelScale(32 if detail else 137 if exploded else 99)
+    cam.SetViewUp(0,0,1); cam.ParallelProjectionOn(); cam.SetParallelScale(zoom_override if zoom_override is not None else 32 if detail else 137 if exploded else 99)
     light=vtk.vtkLight(); light.SetLightTypeToSceneLight(); light.SetPosition(-180,-380,450); light.SetFocalPoint(0,0,85); light.SetIntensity(.7); ren.AddLight(light)
     win=vtk.vtkRenderWindow(); win.SetOffScreenRendering(1); win.SetSize(1700,1400); win.SetMultiSamples(8); win.AddRenderer(ren); win.Render()
     cap=vtk.vtkWindowToImageFilter(); cap.SetInput(win); cap.Update(); writer=vtk.vtkPNGWriter(); writer.SetFileName(str(path)); writer.SetInputConnection(cap.GetOutputPort()); writer.Write(); win.Finalize()
     im=Image.open(path).convert('RGB'); draw=ImageDraw.Draw(im)
     font='/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf'
-    draw.text((70,42),'PHOTO FIGURE  /  ARTBOARD V3',font=ImageFont.truetype(font,29),fill='#354052')
-    draw.text((70,88),'DETAIL VIEW  |  smiling face / chest bow / collar' if detail else 'EXPLODED ASSEMBLY  |  %d detachable pieces'%len(parts) if exploded else 'ASSEMBLED MODEL  |  183 mm board / 150 mm nominal height',font=ImageFont.truetype(font,19),fill='#6b7583')
-    draw.text((70,1344),'Photo-based proportions  •  Sculpted clothing & face  •  Keyed joints  •  0.20 mm radial clearance',font=ImageFont.truetype(font,17),fill='#6b7583')
+    draw.text((70,42),'PHOTO FIGURE  /  AUNT / V4',font=ImageFont.truetype(font,29),fill='#354052')
+    draw.text((70,88),caption if caption else 'DETAIL VIEW  |  smiling aunt / oval spectacles / side-parted hair' if detail else 'EXPLODED ASSEMBLY  |  %d detachable pieces'%len(parts) if exploded else 'ASSEMBLED MODEL  |  183 mm board / 150 mm nominal height',font=ImageFont.truetype(font,19),fill='#6b7583')
+    draw.text((70,1344),'Photo-based proportions  •  Female portrait & spectacles  •  Keyed joints  •  0.20 mm radial clearance',font=ImageFont.truetype(font,17),fill='#6b7583')
     im.save(path)
 
 render(ROOT/'previews/assembled_render.png')
@@ -98,12 +108,18 @@ render(ROOT/'previews/exploded_render.png',exploded=True)
 render(ROOT/'previews/front_render.png',front=True)
 render(ROOT/'previews/rear_render.png',rear=True)
 render(ROOT/'previews/details_render.png',detail=True)
+regular_parts=parts
+parts=[p for p in manifest if p['id'] in ['FitCoupon','FitTestPin']]
+render(ROOT/'previews/fit_coupon_detail.png',target_override=[21,7.5,4.5],zoom_override=22,caption='FIT COUPON | D-key + spectacle pin / radial clearance 0.15 / 0.20 / 0.25 mm')
+parts=regular_parts
 
 # Export standalone STL files on the build plane. Original assembly-space STL
 # remains available separately, and no shape is scaled.
 printdir=ROOT/'print_stl'; printdir.mkdir(exist_ok=True)
 for p in manifest:
     m=meshes[p['id']].copy()
+    if p['id']=='P15_Glasses':
+        m.apply_transform(trimesh.transformations.rotation_matrix(math.pi/2,[1,0,0]))
     if p['id'].startswith('P03_Dowel'):
         m.apply_transform(trimesh.transformations.rotation_matrix(-math.pi/2,[0,1,0]))
     if p['id']=='P12_PaddleLower':
@@ -144,7 +160,7 @@ def render_deck_view(path,side=False):
 render_deck_view(ROOT/'previews/deck_top.png')
 render_deck_view(ROOT/'previews/deck_side.png',True)
 canvas=Image.new('RGB',(1700,1470),'#f4f5f8');draw=ImageDraw.Draw(canvas);font='/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc'
-draw.text((70,35),'艺术滑板 V3 · 曲面与可打印花纹',font=ImageFont.truetype(font,34),fill='#354052')
+draw.text((70,35),'微笑阿姨 V4 · 曲面与可打印花纹',font=ImageFont.truetype(font,34),fill='#354052')
 draw.text((70,87),'圆头轮廓 / 双端上翘约 6.7 mm / 横向浅凹约 1.5 mm / 流线与花瓣浅刻',font=ImageFont.truetype(font,22),fill='#6b7583')
 canvas.paste(Image.open(ROOT/'previews/deck_top.png'),(0,135))
 draw.text((70,995),'侧面轮廓：中央站立区域平整，两端连续翘起',font=ImageFont.truetype(font,24),fill='#354052')
